@@ -1,0 +1,12 @@
+
+# node
+node_modules
+
+# idea
+.idea
+*.iml
+
+# project
+ssl
+secrets.json
+urls.json

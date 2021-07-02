@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DisQuest Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300);
+        #server_list {
+            grid-area: list;
+            width: 20vw;
+            text-wrap: normal;
+            margin-top: 5vh;
+        }
+        
+        a {
+            color: white;
+        }
+        
+        html {
+            height: 100%;
+        }
+        
+        body {
+            display: grid;
+            font-family: 'Source Sans Pro', sans-serif;
+            grid-area: body;
+            grid-template-areas:
+                    "list list body body body body body body body"
+                    "list list body body body body body body body"
+                    "list list body body body body body body body"
+                    "list list body body body body body body body"
+                    "list list body body body body body body body"
+                    "list list body body body body body body body";
+            background: linear-gradient(to bottom right, #50a3a2 0%, #53e3a6 100%) fixed;
+            background-size: 100%;
+            height: 100%;
+            color: white;
+        }
+        
+        .wrapper {
+            text-align: center;
+        }
+        
+        form {
+            padding: 20px 0;
+            position: relative;
+            z-index: 2;
+        }
+        
+        form input {
+            display: block;
+            appearance: none;
+            outline: 0;
+            border: 1px solid rgba(255,255,255,0.4);
+            background-color: rgba(255,255,255,0.2);
+            width: 250px;
+            border-radius: 3px;
+            padding: 10px 15px;
+            margin: 0 auto 10px auto;
+            text-align: center;
+            font-size: 18px;
+            color: white;
+            transition-duration: 0.25s;
+            font-weight: 300;
+        }
+        
+        form input:hover {
+            background-color: rgba(255,255,255,0.4);
+        }
+        
+        form input:focus {
+            background-color: white;
+            width: 300px;
+            color: #53e3a6;
+        }
+        
+        form button {
+            appearance: none;
+            outline: 0;
+            background-color: white;
+            border: 0;
+            padding: 10px 15px;
+            color: #53e3a6;
+            border-radius: 3px;
+            width: 250px;
+            cursor: pointer;
+            font-size: 18px;
+            transition-duration: 0.25s;
+        }
+        
+        form button:hover {
+            background-color: #f5f7f9;
+        }
+        
+        #navigation {
+            overflow: hidden;
+            background-color: rgba(0, 255, 255, 0.5);
+            width: 98vw;
+            position: fixed;
+        }
+        
+        #navigation a {
+            float: left;
+            color: #FFFFFF;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+        
+        #navigation a:hover {
+            background-color: #50a3a2ee;
+            
+        }
+        
+        #navigation a.primary_nav_button {
+            background-color: rgba(0, 255, 255, 0.5);
+            
+        }
+        
+    </style>
+    <script>
+        
+        let selectedGuild = "";
+        
+        let guilds = {
+            
+        }
+        
+        async function onLinkSubmit() {
+            document.getElementById("invite_link").innerText = "Generating...";
+            
+            let url = document.getElementById("invite_link").value;
+            
+            if(url.startsWith("http://"))
+                url = url.substring(7);
+            if(url.startsWith("https://"))
+                url = url.substring(8);
+            if(url.startsWith("dis.quest"))
+                url = url.substring(9);
+            if(url.startsWith("/"))
+                url = url.substring(1);
+            
+            try {
+                fetch(`/api/create/${selectedGuild}/${url}`).catch(r => r.json()).then(r => r.json()).then(istaken => {
+                    console.log(`response: ${JSON.stringify(istaken)}`);
+                    
+                    if(istaken.display_message) {
+                        
+                        if(istaken.display_message.startsWith("You must boost the")) {
+                            document.getElementById("boost_link").innerText = "Link to the Official Server";
+                        }
+                        
+                        if(istaken.display_message.startsWith("Success!")) {
+                            document.getElementById("current_link").hidden = false;
+                            document.getElementById("current_link").innerText = "Current link: " + istaken.display_message.substring(31);
+                            guilds[selectedGuild].currentLink = istaken.display_message.substring(41);
+                        }
+                        
+                        document.getElementById("invite_submit").innerText = istaken.display_message;
+                    }
+                }).catch(r => {
+                    console.log(`r: ${r}`);
+                });
+            } catch(e) {
+                console.log(`error`);
+                console.error(e);
+                document.getElementById("invite_submit").innerText = "URL already claimed.";
+            }
+        }
+        
+        /**
+         * Run when a specific guild is clicked.
+         * 
+         * This says it isn't used when it is
+         * 
+         * @param id {string} the ID of the guild.
+         */
+        function clicked(id) {
+            document.getElementById("server_form").hidden = false;
+            document.getElementById("server_current_invite").hidden = true;
+            document.getElementById("form_server_name").innerText = guilds[id].name;
+            document.getElementById("invite_submit").innerText = "Create new Link!";
+            document.getElementById("boost_link").innerText = "";
+            document.getElementById("invite_link").value = "";
+            selectedGuild = id;
+            
+            console.log(`current link: ${guilds[id].currentLink}`);
+            
+            if(guilds[id].currentLink) {
+                document.getElementById("current_link").hidden = false;
+                document.getElementById("current_link").innerText = "Current link: dis.quest/" + guilds[id].currentLink;
+            } else {
+                document.getElementById("current_link").hidden = true;
+            }
+            
+        }
+        
+        fetch("/api/guilds").then(r => r.json()).then(r => {
+            
+            //remove loading text
+            document.getElementById("server_list").innerText = "";
+            document.getElementById("server_current_invite").innerText = "Click on a server to get started!";
+            
+            //for each server
+            r.forEach(k => {
+                
+                guilds[k.id] = {
+                    "name": k.name,
+                    "currentLink": k.currentLink
+                };
+                console.log(`k.id: ${k.id} k.name: ${k.name}`);
+                if((k.permissions & 32) === 32) {
+                    
+                    console.log(`found guild ${k.name} with perms ${k.permissions} (${k.permissions & 32})`);
+                    console.log(`hasBot: ${JSON.stringify(k.hasBot)}`);
+                    
+                    if(JSON.stringify(k.hasBot) === "false")
+                        return;
+                    
+                    const iconURL = k.icon !== null
+                                  ? `https://cdn.discordapp.com/icons/${k.id}/${k.icon}.png`
+                                  : "https://cdn.discordapp.com/embed/avatars/1.png";
+                    document.getElementById("server_list").innerHTML +=
+                        `<div class="server" onclick="clicked('${k.id}')" style="margin-top: 2vh; cursor: pointer;"><img src="${iconURL}" style="width: 64px" alt="${k.name}"><u><h3>${k.name}</h1></u></div><br>`;
+                }
+            });
+            
+            let height = String(document.getElementById("server_list").getBoundingClientRect().height);
+            
+            console.log(`setting height to ${height}`);
+            
+            document.getElementsByClassName("container")[0].style.height = height;
+            
+            document.getElementById("server_list").innerHTML +=
+                `<div class="server" style="margin-top: 2vh"><img src="/icon.png" alt="d-quest icon" style="width: 64px"><h3>Don't see your server?
+                 <a href="/bot" target="_blank" rel="noopener noreferrer">Add the bot!</a></h3></div>`
+        });
+    </script>
+</head>
+<body>
+<div id="navigation">
+    <a href="/" class="primary_nav_button">Home</a>
+    <a href="/logout">Logout</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/quest">Discord</a>
+    <a href="/bot">Add Bot</a>
+</div>
+<div id="server_list">
+
+</div>
+<div class="wrapper">
+    <div class="container">
+        <form id="server_form" hidden onsubmit="onLinkSubmit()" style="margin-top: 8vh;">
+            <h1 id="form_server_name"></h1>
+            <h1 id="form_message"></h1>
+            <h2 id="current_link"></h2>
+            <label for="invite_link"></label>
+            <input type="text" id="invite_link" placeholder="your-invite">
+            <button type="button" id="invite_submit" onclick="onLinkSubmit()">Create new Link!</button>
+            <br>
+            <a id="boost_link" href="/quest"></a>
+        </form>
+        <h1 id="server_current_invite" style="margin-top: 8vh;">Loading your servers...</h1>
+    </div>
+</div>
+</body>
+</html>
