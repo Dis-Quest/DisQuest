@@ -5,7 +5,7 @@ const secrets = require("../secrets.json");
 
 const master = new Master("./rose/rose_worker.js", {
     token: secrets.bot_token,
-    intents: ["GUILDS"],
+    intents: ["GUILDS", "GUILD_MESSAGES"],
     shards: 1,
     log: () => {}, //no auto-logging
     cache: {
