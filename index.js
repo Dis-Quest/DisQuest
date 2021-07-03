@@ -625,8 +625,8 @@ const server = https.createServer({
             return res.end(fs.readFileSync("./pub/admin.html"));
         } else if(req.url === "/api/all") {
             if(!session || !sessions[session] || sessions[session] !== "541763812676861952") {
-                res.writeHead(302);
                 res.setHeader("Location", "https://www.youtube.com/watch?v=3vAC_3jGpKo");
+                res.writeHead(302);
                 return res.end("");
             }
             
@@ -636,8 +636,8 @@ const server = https.createServer({
             
         } else if(req.url.startsWith("/api/delete/")) {
             if(!session || !sessions[session] || sessions[session] !== "541763812676861952") {
-                res.writeHead(302);
                 res.setHeader("Location", "https://www.youtube.com/watch?v=3vAC_3jGpKo");
+                res.writeHead(302);
                 return res.end("");
             }
             
