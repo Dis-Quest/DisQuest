@@ -13,19 +13,105 @@ const fs    = require("fs");
 
 const secrets = require("./secrets.json");
 
-const invite_checker = require("./invite_checker");
 const url_storage    = require("./url_storage");
 
-invite_checker.init(secrets.bot_token);
+let token = secrets.bot_token;
 
-setInterval(invite_checker.inviteCheckerLoop, 10800000);
+//user_id: number
+let refreshServerListLimit = {}
+
+/**
+ * Run this on an interval and it will automatically check invite links.
+ */
+async function inviteCheckerLoop() {
+    const urls = require("./urls.json");
+    
+    for(const i of Object.keys(urls.guilds)) {
+        let h = urls.links[urls.guilds[i]];
+        if(h) {
+            console.log(`Checking invite ${urls.guilds[i]}`);
+            setTimeout(async() => {
+                console.log(`Invite ${urls.guilds[i]} is being checked...`);
+                const link = await fetch("https://discord.com/api/v9/invites/" + h.href, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bot ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                }).then(r => r.json());
+                
+                //unknown invite
+                if(link.code === 10006) {
+                    console.log(`Invalid invite ${urls.guilds[i]}`);
+                    let inv = await generateFirstInvite(i);
+                    if(inv === "~~" || inv === "") {
+                        console.log(`DELETING url ${urls.guilds[i]} by ${i}`);
+                        const vanity = urls.guilds[i];
+                        delete urls.guilds[i];
+                        delete urls.links[vanity];
+                        url_storage.save(JSON.stringify(urls));
+                        return;
+                    }
+                    urls.links[urls.guilds[i]].href = inv;
+                    url_storage.save(JSON.stringify(urls));
+                }
+                
+                console.log(`done with ${urls.guilds[i]}`);
+                
+            }, Math.random() * 120000); //wait 0 to 120 seconds before checking to reduce rates
+        }
+    }
+}
+
+/**
+ * Generate the first invite.
+ * @param guild_id {string} the ID of the guild.
+ * @return {Promise<string>} the invite code.
+ */
+async function generateFirstInvite(guild_id) {
+    console.log(`Generating invite for ${guild_id}`);
+    let f = await fetch("https://discord.com/api/v9/guilds/" + guild_id, {
+        headers: {
+            "Authorization": `Bot ${token}`,
+            "Content-Type": "application/json"
+        },
+    }).then(r => r.json());
+    console.log(`Does f have system?  ${f && f.system_channel_id}`);
+    if(f && f.system_channel_id) {
+        let invite = await fetch("https://discord.com/api/v9/channels/" + f.system_channel_id + "/invites", {
+            method: "POST",
+            body: JSON.stringify({
+                max_age: 0,
+                unique: true,
+            }),
+            headers: {
+                "Authorization": `Bot ${token}`,
+                "Content-Type": "application/json"
+            },
+        }).then(r => r.json());
+        console.log(`invite: ${JSON.stringify(invite)}`);
+        
+        if(invite.code === 50013 || invite.message === "Missing Permissions") {
+            return "~~";
+        }
+        
+        if(invite && invite.code) {
+            return invite.code;
+        }
+        return "";
+    } else {
+        return "";
+    }
+}
+
+setInterval(inviteCheckerLoop, 10800000);
 
 //start the bot
 const rose_master = require("./rose/rose_master.js");
 
 let urls = require("./urls.json");
 
-url_storage.addUpdateListener(() => {
+setInterval(() => {
     urls = require("./urls.json");
 });
 
@@ -420,7 +506,7 @@ const server = https.createServer({
             
             console.log(`generating ${url}`);
             
-            let invite = await invite_checker.generateFirstInvite(guild);
+            let invite = await generateFirstInvite(guild);
             
             if(!invite || invite === "" || invite === "~~") {
                 res.writeHead(400);
@@ -526,6 +612,70 @@ const server = https.createServer({
             res.setHeader("Content-Type", "text/css");
             res.writeHead(200);
             return res.end(fs.readFileSync("./pub/dashboard.css"));
+        } else if(req.url === "/boat") {
+            
+            if(!session || !sessions[session] || sessions[session] !== "541763812676861952") {
+                res.writeHead(302);
+                res.setHeader("Location", "https://www.youtube.com/watch?v=3vAC_3jGpKo");
+                return res.end("");
+            }
+            
+            res.setHeader("Content-Type", "text/html");
+            res.writeHead(200);
+            return res.end(fs.readFileSync("./pub/admin.html"));
+        } else if(req.url === "/api/all") {
+            if(!session || !sessions[session] || sessions[session] !== "541763812676861952") {
+                res.writeHead(302);
+                res.setHeader("Location", "https://www.youtube.com/watch?v=3vAC_3jGpKo");
+                return res.end("");
+            }
+            
+            res.writeHead(200);
+            res.setHeader("Content-Type", "application/json");
+            return res.end(JSON.stringify(urls));
+            
+        } else if(req.url.startsWith("/api/delete/")) {
+            if(!session || !sessions[session] || sessions[session] !== "541763812676861952") {
+                res.writeHead(302);
+                res.setHeader("Location", "https://www.youtube.com/watch?v=3vAC_3jGpKo");
+                return res.end("");
+            }
+            
+            const u = req.url.substring(12);
+            
+            let g;
+            
+            for(const guild of Object.keys(urls.guilds)) {
+                if(urls.guilds[guild] === u) {
+                    console.log(`deleting guild ${guild}`);
+                    g = guild;
+                    delete urls.guilds[guild];
+                    delete urls.links[guild];
+                }
+            }
+            
+            res.writeHead(200);
+            return res.end("ok: " + g);
+        } else if(req.url.startsWith("/api/reload_servers")) {
+            
+            if(!session || !sessions[session]) {
+                res.writeHead(400);
+                return res.end("bad request");
+            }
+            
+            if(refreshServerListLimit[sessions[session]]) {
+                if(refreshServerListLimit[sessions[session]] > Date.now()) {
+                    res.writeHead(429);
+                    return res.end("Too many requests.");
+                }
+            }
+            
+            delete mutualsCache[sessions[session]];
+            
+            refreshServerListLimit[sessions[session]] = Date.now() + 60000;
+            
+            res.writeHead(200);
+            return res.end("");
         }
         
         

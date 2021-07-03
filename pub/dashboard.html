@@ -170,6 +170,17 @@
             }
         }
         
+        async function refreshServerList() {
+            document.getElementById("server_list").innerText = "";
+            
+            try {
+                await fetch("/api/reload_servers");
+            } catch(e) {
+                alert("Server returned error: " + e);
+            }
+            populateServerList();
+        }
+        
         /**
          * Run when a specific guild is clicked.
          * 
@@ -197,46 +208,53 @@
             
         }
         
-        fetch("/api/guilds").then(r => r.json()).then(r => {
-            
-            //remove loading text
-            document.getElementById("server_list").innerText = "";
-            document.getElementById("server_current_invite").innerText = "Click on a server to get started!";
-            
-            //for each server
-            r.forEach(k => {
+        function populateServerList() {
+            fetch("/api/guilds").then(r => r.json()).then(r => {
                 
-                guilds[k.id] = {
-                    "name": k.name,
-                    "currentLink": k.currentLink
-                };
-                console.log(`k.id: ${k.id} k.name: ${k.name}`);
-                if((k.permissions & 32) === 32) {
+                //remove loading text
+                document.getElementById("server_list").innerText = "";
+                document.getElementById("server_current_invite").innerText = "Click on a server to get started!";
+                
+                //for each server
+                r.forEach(k => {
                     
-                    console.log(`found guild ${k.name} with perms ${k.permissions} (${k.permissions & 32})`);
-                    console.log(`hasBot: ${JSON.stringify(k.hasBot)}`);
-                    
-                    if(JSON.stringify(k.hasBot) === "false")
-                        return;
-                    
-                    const iconURL = k.icon !== null
-                                  ? `https://cdn.discordapp.com/icons/${k.id}/${k.icon}.png`
-                                  : "https://cdn.discordapp.com/embed/avatars/1.png";
-                    document.getElementById("server_list").innerHTML +=
-                        `<div class="server" style="margin-top: 2vh; cursor: pointer;"><img src="${iconURL}" style="width: 64px" onclick="clicked('${k.id}')" alt="${k.name}"><u><h3 onclick="clicked('${k.id}')">${k.name}</h1></u></div><br>`;
-                }
+                    guilds[k.id] = {
+                        "name": k.name,
+                        "currentLink": k.currentLink
+                    };
+                    console.log(`k.id: ${k.id} k.name: ${k.name}`);
+                    if((k.permissions & 32) === 32) {
+                
+                        console.log(`found guild ${k.name} with perms ${k.permissions} (${k.permissions & 32})`);
+                        console.log(`hasBot: ${JSON.stringify(k.hasBot)}`);
+                
+                        if(JSON.stringify(k.hasBot) === "false")
+                            return;
+                
+                        const iconURL = k.icon !== null
+                            ? `https://cdn.discordapp.com/icons/${k.id}/${k.icon}.png`
+                            : "https://cdn.discordapp.com/embed/avatars/1.png";
+                        document.getElementById("server_list").innerHTML +=
+                            `<div class="server" style="margin-top: 2vh; cursor: pointer;"><img src="${iconURL}" style="width: 64px" onclick="clicked('${k.id}')" alt="${k.name}"><u><h3 onclick="clicked('${k.id}')">${k.name}</h1></u></div><br>`;
+                    }
+                });
+                
+                let height = String(document.getElementById("server_list").getBoundingClientRect().height);
+                
+                console.log(`setting height to ${height}`);
+                
+                document.getElementsByClassName("container")[0].style.height = height;
+                
+                document.getElementById("server_list").innerHTML +=
+                    `<div class="server" style="margin-top: 2vh"><img src="/icon.png" alt="d-quest icon" onclick="document.location.href = 'https://dis.quest/bot'" style="width: 64px"><h3>Don't see your server?
+                 <a href="/bot" target="_blank" rel="noopener noreferrer">Add the bot!</a></h3></div>`;
+                
+                document.getElementById("server_list").innerText +=
+                    `<div id="refresh" style="cursor: pointer" onclick="refreshServerList()"><h2>Refresh server list</h2></div>`;
             });
-            
-            let height = String(document.getElementById("server_list").getBoundingClientRect().height);
-            
-            console.log(`setting height to ${height}`);
-            
-            document.getElementsByClassName("container")[0].style.height = height;
-            
-            document.getElementById("server_list").innerHTML +=
-                `<div class="server" style="margin-top: 2vh"><img src="/icon.png" alt="d-quest icon" onclick="document.location.href = 'https://dis.quest/bot'" style="width: 64px"><h3>Don't see your server?
-                 <a href="/bot" target="_blank" rel="noopener noreferrer">Add the bot!</a></h3></div>`
-        });
+        }
+        
+        populateServerList();
     </script>
 </head>
 <body>
