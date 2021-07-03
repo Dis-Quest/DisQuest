@@ -215,6 +215,9 @@
                 document.getElementById("server_list").innerText = "";
                 document.getElementById("server_current_invite").innerText = "Click on a server to get started!";
                 
+                document.getElementById("server_list").innerHTML +=
+                    `<div id="refresh" style="cursor: pointer; text-decoration: underline" onclick="refreshServerList()"><h1>Refresh server list</h1></div>`;
+                
                 //for each server
                 r.forEach(k => {
                     
@@ -249,8 +252,6 @@
                     `<div class="server" style="margin-top: 2vh"><img src="/icon.png" alt="d-quest icon" onclick="document.location.href = 'https://dis.quest/bot'" style="width: 64px"><h3>Don't see your server?
                  <a href="/bot" target="_blank" rel="noopener noreferrer">Add the bot!</a></h3></div>`;
                 
-                document.getElementById("server_list").innerHTML +=
-                    `<div id="refresh" style="cursor: pointer" onclick="refreshServerList()"><h2>Refresh server list</h2></div>`;
             });
         }
         
