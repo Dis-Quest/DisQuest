@@ -3,10 +3,10 @@ const {Worker} = require("discord-rose");
 
 const w = new Worker()
 
-w.setStatus("watching", "https://dis.quest | use []help");
+w.setStatus("watching", "https://dis.quest | use ]help");
 
 w.commands
-    .prefix("[]")
+    .prefix("]")
     .add({
         command: "url",
         exec: ctx => {
