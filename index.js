@@ -424,7 +424,7 @@ const server = https.createServer({
             
             let invite = await invite_checker.generateFirstInvite(guild);
             
-            if(!invite || invite === "") {
+            if(!invite || invite === "" || invite === "~~") {
                 res.writeHead(400);
                 return res.end(JSON.stringify({
                     "display_message": "Uh oh, an error occurred!  Please report this."

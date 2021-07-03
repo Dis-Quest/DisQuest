@@ -86,7 +86,7 @@ async function generateFirstInvite(guild_id) {
         }).then(r => r.json());
         console.log(`invite: ${JSON.stringify(invite)}`);
         
-        if(invite.code === 50013) {
+        if(invite.code === 50013 || invite.message === "Missing Permissions") {
             return "~~";
         }
         
