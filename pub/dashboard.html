@@ -11,6 +11,7 @@
             width: 20vw;
             text-wrap: normal;
             margin-top: 5vh;
+            overflow-y: scroll;
         }
         
         a {
@@ -218,6 +219,8 @@
                 document.getElementById("server_list").innerHTML +=
                     `<div id="refresh" style="cursor: pointer; text-decoration: underline" onclick="refreshServerList()"><h1>Refresh server list</h1></div>`;
                 
+                let isDark = 0;
+                
                 //for each server
                 r.forEach(k => {
                     
@@ -227,18 +230,18 @@
                     };
                     console.log(`k.id: ${k.id} k.name: ${k.name}`);
                     if((k.permissions & 32) === 32) {
-                
+                        
                         console.log(`found guild ${k.name} with perms ${k.permissions} (${k.permissions & 32})`);
                         console.log(`hasBot: ${JSON.stringify(k.hasBot)}`);
-                
+                        
                         if(JSON.stringify(k.hasBot) === "false")
                             return;
-                
+                        
                         const iconURL = k.icon !== null
                             ? `https://cdn.discordapp.com/icons/${k.id}/${k.icon}.png`
                             : "https://cdn.discordapp.com/embed/avatars/1.png";
                         document.getElementById("server_list").innerHTML +=
-                            `<div class="server" style="margin-top: 2vh; cursor: pointer;"><img src="${iconURL}" style="width: 64px" onclick="clicked('${k.id}')" alt="${k.name}"><u><h3 onclick="clicked('${k.id}')">${k.name}</h1></u></div><br>`;
+                            `<div class="server" style="margin-top: 2vh; cursor: pointer; ${(isDark++ % 2 === 1) ? 'background-color: darkcyan;' : ''}"><img src="${iconURL}" style="width: 64px" onclick="clicked('${k.id}')" alt="${k.name}"><u><h3 onclick="clicked('${k.id}')">${k.name}</h1></u></div><br>`;
                     }
                 });
                 
