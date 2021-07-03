@@ -223,7 +223,7 @@
                                   ? `https://cdn.discordapp.com/icons/${k.id}/${k.icon}.png`
                                   : "https://cdn.discordapp.com/embed/avatars/1.png";
                     document.getElementById("server_list").innerHTML +=
-                        `<div class="server" onclick="clicked('${k.id}')" style="margin-top: 2vh; cursor: pointer;"><img src="${iconURL}" style="width: 64px" alt="${k.name}"><u><h3>${k.name}</h1></u></div><br>`;
+                        `<div class="server" style="margin-top: 2vh; cursor: pointer;"><img src="${iconURL}" style="width: 64px" onclick="clicked('${k.id}')" alt="${k.name}"><u><h3 onclick="clicked('${k.id}')">${k.name}</h1></u></div><br>`;
                 }
             });
             
@@ -234,7 +234,7 @@
             document.getElementsByClassName("container")[0].style.height = height;
             
             document.getElementById("server_list").innerHTML +=
-                `<div class="server" style="margin-top: 2vh"><img src="/icon.png" alt="d-quest icon" style="width: 64px"><h3>Don't see your server?
+                `<div class="server" style="margin-top: 2vh"><img src="/icon.png" alt="d-quest icon" onclick="document.location.href = 'https://dis.quest/bot'" style="width: 64px"><h3>Don't see your server?
                  <a href="/bot" target="_blank" rel="noopener noreferrer">Add the bot!</a></h3></div>`
         });
     </script>

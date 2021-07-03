@@ -55,10 +55,10 @@ let mutualsCache = {
  */
 let cooldowns = [];
 
-//clear the cooldowns array every 12 hours.
+//clear the cooldowns array every 5 minutes.
 setInterval(() => {
     cooldowns = [];
-}, 43200000); //12 hours
+}, 300000); //5 mins
 
 require("./guild_create_listener").addListener(() => {
     console.log(`resetting`);
@@ -418,8 +418,6 @@ const server = https.createServer({
                 delete urls.guilds[guild];
             }
             
-            cooldowns.push(guild);
-            
             console.log(`generating ${url}`);
             
             let invite = await invite_checker.generateFirstInvite(guild);
@@ -440,6 +438,8 @@ const server = https.createServer({
             urls.guilds[guild] = url;
             
             url_storage.save(JSON.stringify(urls));
+            
+            cooldowns.push(guild);
             
             res.writeHead(200);
             return res.end(JSON.stringify({
