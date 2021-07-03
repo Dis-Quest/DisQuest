@@ -240,7 +240,7 @@
                             ? `https://cdn.discordapp.com/icons/${k.id}/${k.icon}.png`
                             : "https://cdn.discordapp.com/embed/avatars/1.png";
                         document.getElementById("server_list").innerHTML +=
-                            `<div class="server" style="margin-top: 2vh; cursor: pointer;"><img src="${iconURL}" style="width: 64px" onclick="clicked('${k.id}')" alt="${k.name}"><u><h3 onclick="clicked('${k.id}')">${k.name}</h1></u></div><br>`;
+                            `<div class="server" style="margin-top: 2vh;"><img src="${iconURL}" style="width: 64px;cursor: pointer" onclick="clicked('${k.id}')" alt="${k.name}"><u><h3 onclick="clicked('${k.id}')" style="cursor: pointer">${k.name}</h1></u></div><br>`;
                     }
                 });
                 
