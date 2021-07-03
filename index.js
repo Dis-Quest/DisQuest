@@ -630,8 +630,8 @@ const server = https.createServer({
                 return res.end("");
             }
             
-            res.writeHead(200);
             res.setHeader("Content-Type", "application/json");
+            res.writeHead(200);
             return res.end(JSON.stringify(urls));
             
         } else if(req.url.startsWith("/api/delete/")) {
