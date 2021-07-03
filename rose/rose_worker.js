@@ -23,7 +23,14 @@ w.commands
         exec: ctx => {
             ctx.reply("DisQuest bot help:\n```\n,url - get the DisQuest URL of this server.\n```", false);
         }
-    });
+    }).add({
+        command: "reset",
+        exec: ctx => {
+            if(ctx.author.id === "541763812676861952")
+                process.exit(0);
+        }
+    }
+);
 
 let l;
 
