@@ -3,10 +3,10 @@ const {Worker} = require("discord-rose");
 
 const w = new Worker()
 
-w.setStatus("watching", "https://dis.quest | use ]help");
+w.setStatus("watching", "https://dis.quest | use ,help");
 
 w.commands
-    .prefix("]")
+    .prefix(",")
     .add({
         command: "url",
         exec: ctx => {
@@ -21,7 +21,7 @@ w.commands
     }).add({
         command: "help",
         exec: ctx => {
-            ctx.reply("DisQuest bot help:\n```\ndisquest url - get the DisQuest URL of this server.\n```", false);
+            ctx.reply("DisQuest bot help:\n```\n,url - get the DisQuest URL of this server.\n```", false);
         }
     });
 
