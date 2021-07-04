@@ -693,7 +693,7 @@ const server = https.createServer({
         } else if(req.url.startsWith("/robots.txt")) {
             res.setHeader("Content-Type", "text/plain");
             res.writeHead(200);
-            return res.end("./pub/robots.txt");
+            return res.end(fs.readFileSync("./pub/robots.txt"));
         }
         
         
