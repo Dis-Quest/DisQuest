@@ -618,8 +618,8 @@ const server = https.createServer({
         } else if(req.url === "/boat") {
             
             if(!session || !sessions[session] || sessions[session] !== "541763812676861952") {
-                res.writeHead(302);
                 res.setHeader("Location", "https://www.youtube.com/watch?v=3vAC_3jGpKo");
+                res.writeHead(302);
                 return res.end("");
             }
             
