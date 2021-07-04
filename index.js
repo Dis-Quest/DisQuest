@@ -444,7 +444,8 @@ const server = https.createServer({
                 'icon',       'bot',
                 'boat',       'favicon',
                 'license',    'dmca',
-                'background', 'contact'
+                'background', 'contact',
+                'sitemap',    'robot'
             ];
             
             for(const f of forbidden) {
@@ -622,9 +623,16 @@ const server = https.createServer({
                 return res.end("");
             }
             
+            let content = fs.readFileSync("./pub/admin.html").toString();
+            
+            content.replace("{RAM}", process.memoryUsage.rss().toString(10));
+            content.replace("{URLS}", Object.keys(urls.links).length.toString(10));
+            content.replace("{SESSIONS}", Object.keys(sessions).length.toString(10));
+            content.replace("{TIME}", Date.now().toString(10));
+            
             res.setHeader("Content-Type", "text/html");
             res.writeHead(200);
-            return res.end(fs.readFileSync("./pub/admin.html"));
+            return res.end();
         } else if(req.url === "/api/all") {
             if(!session || !sessions[session] || sessions[session] !== "541763812676861952") {
                 res.setHeader("Location", "https://www.youtube.com/watch?v=3vAC_3jGpKo");
@@ -678,6 +686,14 @@ const server = https.createServer({
             
             res.writeHead(200);
             return res.end("");
+        } else if(req.url.startsWith("/sitemap.xml")) {
+            res.setHeader("Content-Type", "application/xml");
+            res.writeHead(200);
+            return res.end(fs.readFileSync("./pub/sitemap.xml"));
+        } else if(req.url.startsWith("/robots.txt")) {
+            res.setHeader("Content-Type", "text/plain");
+            res.writeHead(200);
+            return res.end("./pub/robots.txt");
         }
         
         
