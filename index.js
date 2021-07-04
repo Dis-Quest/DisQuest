@@ -24,14 +24,20 @@ let refreshServerListLimit = {}
  * Run this on an interval and it will automatically check invite links.
  */
 async function inviteCheckerLoop() {
-    const urls = require("./urls.json");
     
+    //check all links
     for(const i of Object.keys(urls.guilds)) {
+        
+        //if the url exists
         let h = urls.links[urls.guilds[i]];
         if(h) {
             console.log(`Checking invite ${urls.guilds[i]}`);
+            
+            //wait 0 to 120 seconds before checking to reduce rates
             setTimeout(async() => {
                 console.log(`Invite ${urls.guilds[i]} is being checked...`);
+                
+                //check the individual invite
                 const link = await fetch("https://discord.com/api/v9/invites/" + h.href, {
                     method: "GET",
                     headers: {
@@ -40,10 +46,12 @@ async function inviteCheckerLoop() {
                     }
                 }).then(r => r.json());
                 
-                //unknown invite
+                //unknown invite > generate new invite
                 if(link.code === 10006) {
                     console.log(`Invalid invite ${urls.guilds[i]}`);
                     let inv = await generateFirstInvite(i);
+                    
+                    //if the bot could not make a new invite (not in server/no perms) delete the vanity URL.
                     if(inv === "~~" || inv === "") {
                         console.log(`DELETING url ${urls.guilds[i]} by ${i}`);
                         const vanity = urls.guilds[i];
@@ -52,13 +60,15 @@ async function inviteCheckerLoop() {
                         url_storage.save(JSON.stringify(urls));
                         return;
                     }
+                    
+                    //store the new data.
                     urls.links[urls.guilds[i]].href = inv;
                     url_storage.save(JSON.stringify(urls));
                 }
                 
                 console.log(`done with ${urls.guilds[i]}`);
                 
-            }, Math.random() * 120000); //wait 0 to 120 seconds before checking to reduce rates
+            }, Math.random() * 120000);
         }
     }
 }
@@ -70,6 +80,8 @@ async function inviteCheckerLoop() {
  */
 async function generateFirstInvite(guild_id) {
     console.log(`Generating invite for ${guild_id}`);
+    
+    //get the default channel
     let f = await fetch("https://discord.com/api/v9/guilds/" + guild_id, {
         headers: {
             "Authorization": `Bot ${token}`,
@@ -166,6 +178,11 @@ function hasSessionExpired(session_token) {
     return time + 86400000 < Date.now();
 }
 
+/**
+ * Get the session of a user.
+ * @param request the request.
+ * @returns {string | undefined} the session.
+ */
 function getSession(request) {
     const l = {};
     const c = request.headers.cookie;
@@ -180,23 +197,28 @@ function getSession(request) {
     return l["session"];
 }
 
+/**
+ * Check to see if a user is a booster or not.
+ * @param userID {string} the ID of the user.
+ * @returns {Promise<boolean>} true if the user is a booster, false otherwise.
+ */
 async function isBooster(userID) {
     
-    // if(userID === "541763812676861952")
-    //     return true;
-    
     try {
+        
+        //fetch user
         const value = (await fetch(`https://discord.com/api/guilds/858216200798601216/members/${userID}`, {
             headers: {
                 "Authorization": "Bot " + require("./secrets.json").bot_token,
             },
         }).then(r => r.json()));
-    
-        console.log(`value: ${JSON.stringify(value)}`);
         
+        //get the roles of the user
         if(value && value.roles) {
             for(let i = 0; i < value.roles.length; i++) {
                 const r = value.roles[i];
+                
+                //if the user has the booster role or the bypass role.
                 if(r === "860586604917424129" || r === "860348367036481557")
                     return true;
             }
@@ -204,11 +226,6 @@ async function isBooster(userID) {
     } catch(e) {}
     
     return false;
-    
-}
-
-function howManyURLsDoesThisPersonHave(userID) {
-    return urls.users[userID].claimed_urls;
 }
 
 /**
@@ -224,6 +241,7 @@ async function tradeCode(code) {
         "redirect_uri": "https://dis.quest"
     };
     
+    //why is discord not using json for this
     let body = [];
     for(let d in data) {
         const key = encodeURIComponent(d), val = encodeURIComponent(data[d]);
@@ -231,6 +249,7 @@ async function tradeCode(code) {
     }
     const sendBody = body.join("&");
     
+    //get the bearer token
     let json = await (fetch("https://discord.com/api/oauth2/token", {
         method: "POST",
         headers: {
@@ -239,12 +258,11 @@ async function tradeCode(code) {
         body: sendBody
     })).then(res => res.json());
     
-    console.log(`json: ${JSON.stringify(json)}`);
-    
     if(!json || !json.access_token || !json.scope) {
         return undefined;
     }
     
+    //make sure the user didn't mess with the scopes
     if(json.scope !== "identify guilds")
         return undefined;
     
@@ -282,9 +300,27 @@ async function getUserGuilds(bearer_token) {
     })).then(r => r.json());
 }
 
-async function populateMutuals(isCached, session, guild_cache) {
+/**
+ * Deliver a static page.
+ * @param path {string} the path (such as `./pub/dashboard.html`)
+ * @param res {ServerResponse} the response.
+ * @param type {string} the MIME type of the content.
+ */
+function deliverStatic(path, res, type) {
+    res.setHeader("Content-Type", type);
+    res.writeHead(200);
+    return res.end(fs.readFileSync(path));
+}
 
-    
+/**
+ * Redirect the user.
+ * @param url {string} the URL to redirect to.
+ * @param res {ServerResponse} the response.
+ */
+function redirect(url, res) {
+    res.setHeader("Location", url);
+    res.writeHead(302);
+    return res.end("");
 }
 
 const server = https.createServer({
@@ -295,7 +331,7 @@ const server = https.createServer({
 }, async (req, res) => {
     try {
         
-        console.log(`ip ${req.connection.remoteAddress} (${getSession(req)}, ${req.headers["cf-connecting-ip"]}) is connecting`);
+        console.log(`ip ${req.connection.remoteAddress} (${req.headers["cf-connecting-ip"]}) is connecting`);
         
         if(!req.headers["cf-connecting-ip"]) {
             console.error(`User ${req.connection.remoteAddress} tried connecting directly!`);
@@ -305,6 +341,7 @@ const server = https.createServer({
         
         let session = getSession(req);
         
+        //if the session has expired.
         if(hasSessionExpired(session) || !sessions[session]) {
             delete sessions[session];
             delete sessionBearer[session];
@@ -316,21 +353,22 @@ const server = https.createServer({
         if(req.url === "/") {
             
             if(!session) {
-                res.setHeader("Content-Type", "text/html");
-                res.writeHead(200);
-                return res.end(fs.readFileSync("./pub/index_not_logged_in.html"));
+                return deliverStatic("./pub/index_not_logged_in.html", res, "text/html");
             }
             
             res.setHeader("Content-Type", "text/html");
             res.writeHead(200);
             
+            //user
             const user = await getUserFromToken(sessionBearer[session]);
             
+            //replace info on main page with username
             return res.end(fs.readFileSync("./pub/index_logged_in.html")
                              .toString()
                              .replace("{USER}", `${user.username}#${user.discriminator}`));
             
         } else if(req.url.startsWith("/?code=")) {
+            //exchange Discord code for token.
             const code = req.url.substring(7);
             let token = await tradeCode(code);
             
@@ -339,8 +377,7 @@ const server = https.createServer({
                 return res.end("There was an error processing your login request.");
             }
             
-            console.log(`token: ${token}`);
-            
+            //generate new session
             const session_token = `${Date.now()}_${uuid.v4()}`;
             
             const user = await getUserFromToken(token);
@@ -349,13 +386,7 @@ const server = https.createServer({
             sessionBearer[session_token] = token;
             
             res.setHeader("Set-Cookie", `session=${session_token}`);
-            res.setHeader("Location", "https://dis.quest/dashboard");
-            res.writeHead(302);
-            return res.end("");
-        } else if(req.url.startsWith("/login")) {
-            res.setHeader("Location", "https://discord.com/oauth2/authorize?client_id=857884695093706773&redirect_uri=https%3A%2F%2Fdis.quest&response_type=code&scope=identify+guilds");
-            res.writeHead(302);
-            return res.end("");
+            return redirect("https://dis.quest/dashboard", res);
         } else if(req.url.startsWith("/logout")) {
             
             if(!sessions[session]) {
@@ -366,42 +397,35 @@ const server = https.createServer({
             delete mutualsCache[sessions[session]];
             delete sessions[session];
             res.setHeader("Set-Cookie", "session=undefined");
-            res.setHeader("Location", "https://dis.quest/");
-            res.writeHead(302);
-            return res.end("");
-        
-        } else if(req.url.startsWith("/support")) {
+            return redirect("https://dis.quest/", res);
             
-        } else if(req.url.startsWith("/discord")) {
-            res.setHeader("Location", "https://discord.alexisok.dev");
-            res.writeHead(302);
-            return res.end("");
         } else if(req.url.startsWith("/dashboard")) {
             
+            //redirect if invalid session
             if(!session) {
                 res.setHeader("Location", "https://dis.quest/login");
                 res.writeHead(302);
                 return res.end("");
             }
             
-            res.setHeader("Content-Type", "text/html");
-            res.writeHead(200);
-            return res.end(fs.readFileSync("./pub/dashboard.html"));
-        } else if(req.url.startsWith("/contact")) {
-            res.setHeader("Content-Type", "text/html");
-            res.writeHead(200);
-            return res.end(fs.readFileSync("./pub/contact.html"));
+            //deliver dashboard
+            return deliverStatic("./pub/dashboard.html", res, "text/html");
         } else if(req.url.startsWith("/api/create/")) {
+            //create a new DisQuest URL.
             
+            //json
             res.setHeader("Content-Type", "application/json");
             
+            //deny not logged in.
             if(!session) {
                 res.writeHead(401);
                 return res.end("Unauthorized");
             }
             
+            //url: the URL to claim.  guild: the id of the guild.
             let url, guild;
             
+            //if the syntax is incorrect for whatever reason
             try {
                 guild = req.url.split("/")[3];
                 url = req.url.split("/")[4];
@@ -416,6 +440,8 @@ const server = https.createServer({
                 }));
             }
             
+            //if the URL is a premium URL and the user is not boosting,
+            //stop it here.
             if(url.length <= 5) {
                 let isBoosting = await isBooster(sessions[session]);
                 console.log(`isboosting: ${isBoosting}`);
@@ -427,8 +453,10 @@ const server = https.createServer({
                 }
             }
             
+            //debug
             console.log(`Does ${url} match the regex?  ${url.match(/^[a-z0-9-]{1,64}$/g)}`);
             
+            //check if the URL is valid.
             if(!(url.match(/^[a-z0-9-]{1,64}$/g))) {
                 res.writeHead(400);
                 return res.end(JSON.stringify({
@@ -436,6 +464,7 @@ const server = https.createServer({
                 }));
             }
             
+            //list of forbidden words the URL cannot start with.
             const forbidden = [
                 'login',      'logout',
                 'support',    'discord',
@@ -449,6 +478,7 @@ const server = https.createServer({
                 'faq',        'webhook'
             ];
             
+            //check if the URL starts with a forbidden word.
             for(const f of forbidden) {
                 if(url.startsWith(f)) {
                     res.writeHead(409);
@@ -458,6 +488,7 @@ const server = https.createServer({
                 }
             }
             
+            //if the URL is already claimed.
             if(urls.links[url]) {
                 res.writeHead(409);
                 return res.end(JSON.stringify({
@@ -465,6 +496,7 @@ const server = https.createServer({
                 }));
             }
             
+            //check to see if the bot is in the guild.
             if(!(await rose_master.isInGuild(guild))) {
                 res.writeHead(400);
                 return res.end(JSON.stringify({
@@ -472,16 +504,14 @@ const server = https.createServer({
                 }));
             }
             
+            //if the mutuals cache doesn't exist for whatever reason
             if(!mutualsCache)
                 await getUserGuilds(sessionBearer[session]);
             
-            console.log(`mutuals: ${JSON.stringify(mutualsCache)}`);
-            console.log(`guild: ${guild}`);
-            
-            //if user has manage server permissions
             
             let p_guild;
             
+            //check to make sure that the guild exists.
             for(let i = 0; i < mutualsCache[sessions[session]].guilds.length; i++) {
                 if(mutualsCache[sessions[session]].guilds[i].id === guild) {
                     p_guild = mutualsCache[sessions[session]].guilds[i];
@@ -489,6 +519,8 @@ const server = https.createServer({
                 }
             }
             
+            //if user has manage server permissions (normally, the server won't show up on
+            //their end if they do not have the permissions)
             if(!p_guild || (p_guild.permissions_new & 32) !== 32) {
                 res.writeHead(400);
                 return res.end(JSON.stringify({
@@ -496,6 +528,7 @@ const server = https.createServer({
                 }));
             }
             
+            //if the guild is on a cooldown.
             if(cooldowns.includes(guild)) {
                 res.writeHead(400);
                 return res.end(JSON.stringify({
@@ -503,15 +536,17 @@ const server = https.createServer({
                 }))
             }
             
+            //delete any previous URL the guild may have had.
             if(urls.guilds[guild]) {
                 delete urls.links[urls.guilds[guild]];
                 delete urls.guilds[guild];
             }
             
-            console.log(`generating ${url}`);
+            console.log(`generating ${url} for ${guild}`);
             
             let invite = await generateFirstInvite(guild);
             
+            //if the invite is invalid, the bot doesn't have invite perms, or some other error.
             if(!invite || invite === "" || invite === "~~") {
                 res.writeHead(400);
                 return res.end(JSON.stringify({
@@ -519,18 +554,19 @@ const server = https.createServer({
                 }));
             }
             
+            //write the invite.
             urls.links[url] = {
                 href: invite,
                 owner: sessions[session],
                 uses: 0,
             };
             
+            //store the URL and cooldown the guild.
             urls.guilds[guild] = url;
-            
             url_storage.save(JSON.stringify(urls));
-            
             cooldowns.push(guild);
             
+            //success!!!
             res.writeHead(200);
             return res.end(JSON.stringify({
                 "display_message": `Success!  Your short invite is dis.quest/${url}`,
@@ -538,18 +574,22 @@ const server = https.createServer({
             
         } else if(req.url.startsWith("/api/guilds")) {
             
+            //if the user is not logged in, decline
             if(!session) {
                 res.writeHead(401);
                 return res.end("Unauthorized.");
             }
             
+            //get the guilds
             res.setHeader("Content-Type", "application/json");
             res.writeHead(200);
             
-            let guild_cache;
             
+            //prefer cached guilds rather than pinging Discord every time.
+            let guild_cache;
             let isCached = false;
             
+            //if the guilds are cached, load them here.  If it is expired, delete the cache.
             if(mutualsCache[sessions[session]]) {
                 if(mutualsCache[sessions[session]].expires > Date.now()) {
                     guild_cache = mutualsCache[sessions[session]].guilds;
@@ -561,16 +601,19 @@ const server = https.createServer({
             
             let guilds;
             
+            //re-get the guilds if they are not cached.
             if(!isCached) {
                 guilds = await getUserGuilds(sessionBearer[session]);
                 mutualsCache[sessions[session]] = {};
-                mutualsCache[sessions[session]].expires = Date.now() + 3600000; //1 hour
+                mutualsCache[sessions[session]].expires = Date.now() + 3600000; //cache for 1 hour
             } else {
                 guilds = guild_cache;
             }
             
+            //guilds to return
             let returnedGuilds = [];
             
+            //add all the mutual guilds to the return.
             for(let i = 0; i < guilds.length; i++) {
                 if(!(await rose_master.isInGuild(guilds[i].id)))
                     continue;
@@ -581,47 +624,15 @@ const server = https.createServer({
                 returnedGuilds.push(guilds[i]);
             }
             
+            //send the user the guilds
             mutualsCache[sessions[session]].guilds = returnedGuilds;
-            
             return res.end(JSON.stringify(returnedGuilds));
             
-        } else if(req.url.startsWith("/about")) {
-            
-        } else if(req.url.startsWith("/background.css")) {
-            res.setHeader("Content-Type", "text/css")
-            res.writeHead(200);
-            return res.end(fs.readFileSync("./pub/background.css"));
-        } else if(req.url.startsWith("/privacy")) {
-            res.setHeader("Content-Type", "text/html");
-            res.writeHead(200);
-            return res.end(fs.readFileSync("./pub/privacy.html"));
-        } else if(req.url.startsWith("/icon.png")) {
-            res.setHeader("Content-Type", "image/png");
-            res.writeHead(200);
-            return res.end(fs.readFileSync("./pub/dis.quest.png"));
-        } else if(req.url === "/bot") {
-            
-            // if(sessions[session]) {
-            //     delete mutualsCache[sessions[session]];
-            // }
-            
-            res.setHeader("Location", "https://discord.com/api/oauth2/authorize?client_id=857884695093706773&permissions=1&redirect_uri=https%3A%2F%2Fdis.quest&scope=bot");
-            res.writeHead(302);
-            return res.end("");
-        } else if(req.url === "/favicon.ico") {
-            res.setHeader("Content-Type", "image/x-icon");
-            res.writeHead(200);
-            return res.end(fs.readFileSync("./pub/favicon.ico"));
-        } else if(req.url === "/dashboard.css") {
-            res.setHeader("Content-Type", "text/css");
-            res.writeHead(200);
-            return res.end(fs.readFileSync("./pub/dashboard.css"));
         } else if(req.url === "/boat") {
             
+            //owner only
             if(!session || !sessions[session] || sessions[session] !== "541763812676861952") {
-                res.setHeader("Location", "https://www.youtube.com/watch?v=XUhVCoTsBaM");
-                res.writeHead(302);
-                return res.end("");
+                return redirect("https://www.youtube.com/watch?v=XUhVCoTsBaM", res);
             }
             
             let content = fs.readFileSync("./pub/admin.html").toString();
@@ -635,10 +646,10 @@ const server = https.createServer({
             res.writeHead(200);
             return res.end(content);
         } else if(req.url === "/api/all") {
+            
+            //owner only
             if(!session || !sessions[session] || sessions[session] !== "541763812676861952") {
-                res.setHeader("Location", "https://www.youtube.com/watch?v=XUhVCoTsBaM");
-                res.writeHead(302);
-                return res.end("");
+                return redirect("https://www.youtube.com/watch?v=XUhVCoTsBaM", res);
             }
             
             res.setHeader("Content-Type", "application/json");
@@ -646,10 +657,10 @@ const server = https.createServer({
             return res.end(JSON.stringify(urls));
             
         } else if(req.url.startsWith("/api/delete/")) {
+            
+            //owner only
             if(!session || !sessions[session] || sessions[session] !== "541763812676861952") {
-                res.setHeader("Location", "https://www.youtube.com/watch?v=XUhVCoTsBaM");
-                res.writeHead(302);
-                return res.end("");
+                return redirect("https://www.youtube.com/watch?v=XUhVCoTsBaM", res);
             }
             
             const u = req.url.substring(12);
@@ -668,12 +679,15 @@ const server = https.createServer({
             res.writeHead(200);
             return res.end("ok: " + g);
         } else if(req.url.startsWith("/api/reload_servers")) {
+            //reload the servers
             
+            //auth
             if(!session || !sessions[session]) {
                 res.writeHead(400);
                 return res.end("bad request");
             }
             
+            //if the user already refreshed recently.
             if(refreshServerListLimit[sessions[session]]) {
                 if(refreshServerListLimit[sessions[session]] > Date.now()) {
                     res.writeHead(429);
@@ -685,24 +699,28 @@ const server = https.createServer({
             
             refreshServerListLimit[sessions[session]] = Date.now() + 60000;
             
+            //no need to deliver content.
             res.writeHead(200);
             return res.end("");
-        } else if(req.url.startsWith("/sitemap.xml")) {
-            res.setHeader("Content-Type", "application/xml");
-            res.writeHead(200);
-            return res.end(fs.readFileSync("./pub/sitemap.xml"));
-        } else if(req.url.startsWith("/robots.txt")) {
-            res.setHeader("Content-Type", "text/plain");
-            res.writeHead(200);
-            return res.end(fs.readFileSync("./pub/robots.txt"));
-        } else if(req.url.startsWith("/faq")) {
-            res.setHeader("Content-Type", "text/html");
-            res.writeHead(200);
-            return res.end(fs.readFileSync("./pub/faq.html"));
-        } else if(req.url === "/webhook") {
-            
+        } else if(req.url.startsWith("/sitemap.xml")) return deliverStatic("./pub/sitemap.xml", res, "application/xml");
+        else if(req.url.startsWith("/robots.txt")) return deliverStatic("./pub/robots.txt", res, "text/plain");
+        else if(req.url.startsWith("/faq")) return deliverStatic("./pub/faq.html", res, "text/html");
+        else if(req.url.startsWith("/about")) return redirect("https://dis.quest/faq", res);
+        else if(req.url.startsWith("/background.css")) return deliverStatic("./pub/background.css", res, "text/css");
+        else if(req.url.startsWith("/privacy")) return deliverStatic("./pub/privacy.html", res, "text/html");
+        else if(req.url.startsWith("/icon.png")) return deliverStatic("./pub/dis.quest.png", res, "image/png");
+        else if(req.url === "/bot") return redirect("https://discord.com/api/oauth2/authorize?client_id=857884695093706773&permissions=1&redirect_uri=https%3A%2F%2Fdis.quest&scope=bot", res);
+        else if(req.url === "/favicon.ico") return deliverStatic("./pub/favicon.ico", res, "image/x-icon");
+        else if(req.url === "/dashboard.css") return deliverStatic("./pub/dashboard.css", res, "text/css");
+        else if(req.url.startsWith("/contact")) return deliverStatic("./pub/contact.html", res, "text/html");
+        else if(req.url.startsWith("/support")) return redirect("https://dis.quest/faq", res);
+        else if(req.url.startsWith("/discord")) return redirect("https://discord.alexisok.dev", res);
+        else if(req.url.startsWith("/login")) return redirect("https://discord.com/oauth2/authorize?client_id=857884695093706773&redirect_uri=https%3A%2F%2Fdis.quest&response_type=code&scope=identify+guilds", res);
+        else if(req.url === "/webhook") {
+            //reserved for a later version
         }
         
+        //check if the URL is a vanity URL.
         if(urls.links[req.url.substring(1)]) {
             
             //analytics
