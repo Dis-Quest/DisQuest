@@ -35,7 +35,17 @@ w.commands
     }).add({
         command: "info",
         exec: ctx => {
-            ctx.reply(`\nInfo for the DisQuest bot:\n\`\`\`\nServers: ${ctx.worker.guilds.size}\nMemory:  ${process.memoryUsage.rss() / 1024 / 1024}MB of ${os.freemem() / 1024 / 1024}MB.\nUptime: ${process.uptime() / 60} minutes or ${process.uptime() / 60 / 60} hours.\n\`\`\`\n\nDisQuest version ${require("../package.json").version}.\n\nRunning Discord Rose version ${require("../package.json").dependencies["discord-rose"].replace("^", "")}.\n\nCreated by AlexIsOK#0384.`, false);
+            ctx.reply(`
+Info for the DisQuest bot:
+\`\`\`
+Servers: ${ctx.worker.guilds.size}
+Memory:  ${(process.memoryUsage.rss() / 1024 / 1024).toFixed(2)}MB of ${(os.freemem() / 1024 / 1024).toFixed(2)}MB.
+Uptime:  ${(process.uptime() / 60).toFixed(2)} minutes or ${(process.uptime() / 60 / 60).toFixed(2)} hours.
+\`\`\`
+DisQuest version ${require("../package.json").version}.
+Running Discord Rose version ${require("../package.json").dependencies["discord-rose"].replace("^", "")}.
+
+Made with <3 by AlexIsOK#0384.`, false);
         }
 });
 
