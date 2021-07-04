@@ -54,5 +54,5 @@ Name: ${data.name}
 Icon: ${data.icon}
 Owner: ${data.owner}
 \`\`\``
-    })
+    }).then(r => r.json()).then(r => console.log(`wh r: ${r}`));
 });
