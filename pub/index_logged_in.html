@@ -14,10 +14,41 @@
             background-color: #2c2f33;
             color: white;
         }
+        #navigation {
+            overflow: hidden;
+            background-color: rgba(0, 255, 255, 0.5);
+            width: 100vw;
+            position: fixed;
+        }
+
+        #navigation a {
+            float: left;
+            color: #FFFFFF;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+
+        #navigation a:hover {
+            background-color: #50a3a2ee;
+
+        }
+
+        #navigation a.primary_nav_button {
+            background-color: rgba(0, 255, 255, 0.5);
+
+        }
     </style>
     <link rel="stylesheet" href="background.css">
 </head>
 <body>
+<div id="navigation">
+    <a href="/logout" class="primary_nav_button">Logout</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/quest">Discord</a>
+    <a href="/bot">Add Bot</a>
+</div>
 <div class="wrapper">
     <div class="container">
         <h1>dis.quest, automatically shorten Discord invite links.</h1>

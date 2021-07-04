@@ -696,13 +696,11 @@ const server = https.createServer({
             return res.end(fs.readFileSync("./pub/robots.txt"));
         }
         
-        
-        
         if(urls.links[req.url.substring(1)]) {
-        
+            
             //analytics
             urls.links[req.url.substring(1)].uses++;
-        
+            
             res.setHeader("Location", "https://discord.gg/" + urls.links[req.url.substring(1)].href);
             res.writeHead(302);
             return res.end("");
