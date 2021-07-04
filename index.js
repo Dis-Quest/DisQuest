@@ -388,7 +388,9 @@ const server = https.createServer({
             res.writeHead(200);
             return res.end(fs.readFileSync("./pub/dashboard.html"));
         } else if(req.url.startsWith("/contact")) {
-            
+            res.setHeader("Content-Type", "text/html");
+            res.writeHead(200);
+            return res.end(fs.readFileSync("./pub/contact.html"));
         } else if(req.url.startsWith("/api/create/")) {
             
             res.setHeader("Content-Type", "application/json");
@@ -692,7 +694,7 @@ const server = https.createServer({
         
         res.setHeader("Content-Type", "text/html");
         res.writeHead(404);
-        res.end(fs.readFileSync("./pub/404.html"));
+        return res.end(fs.readFileSync("./pub/404.html"));
     } catch(e) {
         console.error(e);
     }

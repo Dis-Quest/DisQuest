@@ -3,6 +3,8 @@ const {Worker} = require("discord-rose");
 
 const w = new Worker()
 
+const fetch = require("node-fetch");
+
 w.setStatus("watching", "https://dis.quest | use ,help");
 
 w.commands
@@ -39,4 +41,14 @@ const gcl = require("../guild_create_listener");
 w.on("GUILD_CREATE", data => {
     console.log(`guild create ${data}`);
     gcl.invoke();
+    fetch(require("../secrets.json").webhook_url, {
+        method: "POST",
+        content: `Guild create: 
+\`\`\`
+ID: ${data.id}
+Name: ${data.name}
+Icon: ${data.icon}
+Owner: ${data.owner}
+\`\`\``
+    })
 });
