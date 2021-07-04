@@ -44,7 +44,10 @@ w.on("GUILD_CREATE", data => {
     const secrets = require("../secrets.json");
     fetch(secrets.webhook_url, {
         method: "POST",
-        content: `Guild create: 
+        headers: {
+            "Content-Type": "application/json"
+        },
+        content: `Guild create:
 \`\`\`
 ID: ${data.id}
 Name: ${data.name}
