@@ -123,10 +123,6 @@ const rose_master = require("./rose/rose_master.js");
 
 let urls = require("./urls.json");
 
-setInterval(() => {
-    urls = require("./urls.json");
-});
-
 //session_token: discord_id
 let sessions = {
     
