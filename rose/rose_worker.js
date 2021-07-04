@@ -4,6 +4,8 @@ const os       = require("os");
 
 const w = new Worker()
 
+const p = require("../package.json");
+
 const fetch = require("node-fetch");
 
 w.setStatus("watching", "https://dis.quest | use ,help");
@@ -42,8 +44,8 @@ Servers: ${ctx.worker.guilds.size}
 Memory:  ${(process.memoryUsage.rss() / 1024 / 1024).toFixed(2)}MB of ${(os.freemem() / 1024 / 1024).toFixed(2)}MB.
 Uptime:  ${(process.uptime() / 60).toFixed(2)} minutes or ${(process.uptime() / 60 / 60).toFixed(2)} hours.
 \`\`\`
-DisQuest version ${require("../package.json").version}.
-Running Discord Rose version ${require("../package.json").dependencies["discord-rose"].replace("^", "")}.
+DisQuest version ${p.version}.
+Running Discord Rose version ${p.dependencies["discord-rose"].replace("^", "")}.
 
 Made with <3 by AlexIsOK#0384.`, false);
         }
@@ -56,18 +58,4 @@ const gcl = require("../guild_create_listener");
 w.on("GUILD_CREATE", data => {
     console.log(`guild create ${data}`);
     gcl.invoke();
-    const secrets = require("../secrets.json");
-    fetch(secrets.webhook_url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        content: `Guild create:
-\`\`\`
-ID: ${data.id}
-Name: ${data.name}
-Icon: ${data.icon}
-Owner: ${data.owner}
-\`\`\``
-    }).then(r => r.json()).then(r => console.log(`wh r: ${r}`));
 });
