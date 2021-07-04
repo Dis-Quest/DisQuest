@@ -445,7 +445,8 @@ const server = https.createServer({
                 'boat',       'favicon',
                 'license',    'dmca',
                 'background', 'contact',
-                'sitemap',    'robot'
+                'sitemap',    'robot',
+                'faq'
             ];
             
             for(const f of forbidden) {
