@@ -618,7 +618,7 @@ const server = https.createServer({
         } else if(req.url === "/boat") {
             
             if(!session || !sessions[session] || sessions[session] !== "541763812676861952") {
-                res.setHeader("Location", "https://www.youtube.com/watch?v=3vAC_3jGpKo");
+                res.setHeader("Location", "https://www.youtube.com/watch?v=XUhVCoTsBaM");
                 res.writeHead(302);
                 return res.end("");
             }
@@ -635,7 +635,7 @@ const server = https.createServer({
             return res.end(content);
         } else if(req.url === "/api/all") {
             if(!session || !sessions[session] || sessions[session] !== "541763812676861952") {
-                res.setHeader("Location", "https://www.youtube.com/watch?v=3vAC_3jGpKo");
+                res.setHeader("Location", "https://www.youtube.com/watch?v=XUhVCoTsBaM");
                 res.writeHead(302);
                 return res.end("");
             }
@@ -646,7 +646,7 @@ const server = https.createServer({
             
         } else if(req.url.startsWith("/api/delete/")) {
             if(!session || !sessions[session] || sessions[session] !== "541763812676861952") {
-                res.setHeader("Location", "https://www.youtube.com/watch?v=3vAC_3jGpKo");
+                res.setHeader("Location", "https://www.youtube.com/watch?v=XUhVCoTsBaM");
                 res.writeHead(302);
                 return res.end("");
             }
