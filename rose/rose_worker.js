@@ -41,7 +41,8 @@ const gcl = require("../guild_create_listener");
 w.on("GUILD_CREATE", data => {
     console.log(`guild create ${data}`);
     gcl.invoke();
-    fetch(require("../secrets.json").webhook_url, {
+    const secrets = require("../secrets.json");
+    fetch(secrets.webhook_url, {
         method: "POST",
         content: `Guild create: 
 \`\`\`
