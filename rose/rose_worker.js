@@ -1,5 +1,6 @@
 
 const {Worker} = require("discord-rose");
+const os       = require("os");
 
 const w = new Worker()
 
@@ -23,7 +24,7 @@ w.commands
     }).add({
         command: "help",
         exec: ctx => {
-            ctx.reply("DisQuest bot help:\n```\n,url - get the DisQuest URL of this server.\n```", false);
+            ctx.reply("DisQuest bot help:\n```\n,url - get the DisQuest URL of this server.\ninfo - get info on this bot.\n```", false);
         }
     }).add({
         command: "reset",
@@ -31,8 +32,12 @@ w.commands
             if(ctx.author.id === "541763812676861952")
                 process.exit(0);
         }
-    }
-);
+    }).add({
+        command: "info",
+        exec: ctx => {
+            ctx.reply(`\nInfo for the DisQuest bot:\n\`\`\`\nServers: ${ctx.worker.guilds.size}\nMemory:  ${process.memoryUsage.rss() / 1024 / 1024}MB of ${os.freemem() / 1024 / 1024}MB.\nUptime: ${process.uptime() / 60} minutes or ${process.uptime() / 60 / 60} hours.\n\`\`\`\n\nDisQuest version ${require("../package.json").version}.\n\nRunning Discord Rose version ${require("../package.json").dependencies["discord-rose"].replace("^", "")}.\n\nCreated by AlexIsOK#0384.`, false);
+        }
+});
 
 let l;
 
