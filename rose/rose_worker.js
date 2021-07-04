@@ -26,7 +26,7 @@ w.commands
     }).add({
         command: "help",
         exec: ctx => {
-            ctx.reply("DisQuest bot help:\n```\n,url - get the DisQuest URL of this server.\ninfo - get info on this bot.\n```", false);
+            ctx.reply("DisQuest bot help:\n```\n,url  - get the DisQuest URL of this server.\n,info - get info on this bot.\n```", false);
         }
     }).add({
         command: "reset",
