@@ -694,6 +694,10 @@ const server = https.createServer({
             res.setHeader("Content-Type", "text/plain");
             res.writeHead(200);
             return res.end(fs.readFileSync("./pub/robots.txt"));
+        } else if(req.url.startsWith("/faq")) {
+            res.setHeader("Content-Type", "text/html");
+            res.writeHead(200);
+            return res.end(fs.readFileSync("./pub/faq.html"));
         }
         
         if(urls.links[req.url.substring(1)]) {

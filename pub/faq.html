@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DisQuest FAQ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Automatically generate custom invite links for Discord servers using dis.quest without worrying about expiring links." />
+    <meta property="og:title" content="Dis.Quest" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://dis.quest/" />
+    <meta property="og:description" content="Automatically generate custom invite links for Discord servers using dis.quest without worrying about expiring links." />
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300);
+        body {
+            background-color: #2c2f33;
+            color: white;
+            overflow-x: hidden;
+        }
+        #navigation {
+            overflow: hidden;
+            background-color: rgba(0, 255, 255, 0.5);
+            width: 100%;
+        }
+        .wrapper {
+            background: linear-gradient(to bottom right, #50a3a2 0%, #53e3a6 100%);
+         }
+        #navigation a {
+            float: left;
+            color: #FFFFFF;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+        #navigation a:hover {
+            background-color: #50a3a2ee;
+        }
+        #navigation a.primary_nav_button {
+            background-color: rgba(0, 255, 255, 0.5);
+        }
+        .question {
+            margin-top: 5vh;
+            margin-left: 1vw;
+        }
+        a {
+            color: white;
+        }
+    </style>
+    <style>
+        
+    </style>
+</head>
+<body>
+<div id="navigation">
+    <a href="/" class="primary_nav_button">Home</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/quest">Discord</a>
+    <a href="/bot">Add Bot</a>
+    <a href="/faq">FAQ</a>
+</div>
+<div class="wrapper">
+    <br><br>
+    <h1 class="question">DisQuest FAQ</h1>
+    <div class="question">
+        <h2>What is this site?</h2>
+        <p>This site is DisQuest.  You can use it to create custom invite links for your Discord server!</p>
+        <p>For example, instead of having an invite such as "discord.gg/4tfb8bZkQJ" you can have "dis.quest/yourinvite", much easier to share.</p>
+    </div>
+    <div class="question">
+        <h2>Is this free?  What's the catch?</h2>
+        <p>No catch, but if you want a URL that is 1-5 characters, you must boost the <a href="https://dis.quest/quest">official server.</a></p>
+        <p>Short URLs will be given to open-source project servers.  Please contact me if you run one of these servers and would like a shorter invite.</p>
+    </div>
+    <div class="question">
+        <h2>I invited the bot, what does it do?</h2>
+        <p>The bot is used to create the invite link for your server.  It has a command ",url" which will fetch your server's current DisQuest URL.</p>
+        <p>If an invite link expires, or if it is revoked, the bot will generate a new one.</p>
+    </div>
+    <div class="question">
+        <h2>Does the bot need any special permissions?</h2>
+        <p>The bot needs the "Create Invite Link" permission on Discord.  It is not recommended to give bots more permissions than necessary.</p>
+        <p>To use the ",url" command, the bot needs to be able to read and send messages to channels, though this is 100% optional.</p>
+    </div>
+    <div class="question">
+        <h2>I added my server and it doesn't show up!</h2>
+        <p>If your server doesn't show up, press the "Refresh Server List" link on the dashboard.</p>
+        <p>If this does not work, try <a href="/logout">logging out</a> then <a href="/login">logging back in</a>.</p>
+    </div>
+    <div class="question">
+        <h2>How do I delete my custom link?</h2>
+        <p>To remove your custom link and stop the bot from creating new links, kick the bot from the server, and then
+        revoke any invite links it made in the "Invites" page under your server settings.</p>
+        <p>It may take a few hours for the bot to re-scan your invite.  After this, the DisQuest URL will become available again.</p>
+    </div>
+    <div class="question">
+        <h2>The bot is in a server but it isn't on the list!</h2>
+        <p>To change/create a DisQuest URL, you must have the "Manage Server" permission in that server.</p>
+    </div>
+    <div class="question">
+        <h2>I got an error creating a link!</h2>
+        <p>Getting an error is usually the result of one of the following:</p>
+        <ul>
+            <li>The bot is no longer in the server</li>
+            <li>The bot does not have permission to create an invite link</li>
+            <li>Your session may have expired (try refreshing the page)</li>
+            <li>Discord may be rate-limiting the bot (try again in a few minutes)</li>
+        </ul>
+        <p>If none of the above help, feel free to message me on Discord: AlexIsOK#0384</p>
+    </div>
+    <div class="question">
+        <h2>Is this site affiliated with Discord?</h2>
+        <p>While this site creates custom Discord links, it is not affiliated with Discord or any of its partners.</p>
+        <p>DisQuest is completely independent from Discord.</p>
+    </div>
+    <br><br><br><br><br>
+    <br><br><br><br><br>
+    <br><br><br><br><br>
+    <br><br><br><br><br>
+</div>
+</body>
+</html>
