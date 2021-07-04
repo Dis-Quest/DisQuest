@@ -446,7 +446,7 @@ const server = https.createServer({
                 'license',    'dmca',
                 'background', 'contact',
                 'sitemap',    'robot',
-                'faq'
+                'faq',        'webhook'
             ];
             
             for(const f of forbidden) {
@@ -699,6 +699,8 @@ const server = https.createServer({
             res.setHeader("Content-Type", "text/html");
             res.writeHead(200);
             return res.end(fs.readFileSync("./pub/faq.html"));
+        } else if(req.url === "/webhook") {
+            
         }
         
         if(urls.links[req.url.substring(1)]) {
