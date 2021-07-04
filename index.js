@@ -625,14 +625,14 @@ const server = https.createServer({
             
             let content = fs.readFileSync("./pub/admin.html").toString();
             
-            content.replace("{RAM}", process.memoryUsage.rss().toString(10));
-            content.replace("{URLS}", Object.keys(urls.links).length.toString(10));
-            content.replace("{SESSIONS}", Object.keys(sessions).length.toString(10));
-            content.replace("{TIME}", Date.now().toString(10));
+            content = content.replace("{RAM}", process.memoryUsage.rss().toString(10));
+            content = content.replace("{URLS}", Object.keys(urls.links).length.toString(10));
+            content = content.replace("{SESSIONS}", Object.keys(sessions).length.toString(10));
+            content = content.replace("{TIME}", Date.now().toString(10));
             
             res.setHeader("Content-Type", "text/html");
             res.writeHead(200);
-            return res.end();
+            return res.end(content);
         } else if(req.url === "/api/all") {
             if(!session || !sessions[session] || sessions[session] !== "541763812676861952") {
                 res.setHeader("Location", "https://www.youtube.com/watch?v=3vAC_3jGpKo");
