@@ -119,7 +119,8 @@ async function generateFirstInvite(guild_id) {
 setInterval(inviteCheckerLoop, 10800000);
 
 //start the bot
-const rose_master = require("./rose/rose_master.js");
+
+const discord_ws = require("./discord_ws");
 
 let urls = require("./urls.json");
 
@@ -493,7 +494,7 @@ const server = https.createServer({
             }
             
             //check to see if the bot is in the guild.
-            if(!(await rose_master.isInGuild(guild))) {
+            if(!(await discord_ws.isInGuild(guild))) {
                 res.writeHead(400);
                 return res.end(JSON.stringify({
                     "display_message": "An error occurred!  If this happens again, please report this."
@@ -611,7 +612,7 @@ const server = https.createServer({
             
             //add all the mutual guilds to the return.
             for(let i = 0; i < guilds.length; i++) {
-                if(!(await rose_master.isInGuild(guilds[i].id)))
+                if(!(await discord_ws.isInGuild(guilds[i].id)))
                     continue;
                 guilds[i]["hasBot"] = true;
                 console.log(`urls: ${guilds[i].id} ${urls.guilds[guilds[i].id]}`);

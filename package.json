@@ -11,7 +11,6 @@
   "license": "ISC",
   "dependencies": {
     "@types/node-fetch": "^2.5.10",
-    "discord-rose": "^1.4.3",
     "node-fetch": "^2.6.1",
     "uuid": "^8.3.2",
     "ws": "^7.5.0"

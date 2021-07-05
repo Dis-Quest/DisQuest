@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script>
+        fetch("/api/all").then(r => r.json()).then(r => {
+            document.getElementById("thing").innerText = JSON.stringify(r, null, 2);
+        });
+    </script>
 </head>
 <body>
 <h1>Administrator Tools</h1>
@@ -11,6 +16,8 @@
 <p>Sessions: {SESSIONS}</p>
 <p>Time: {TIME}</p>
 <br><br>
-<iframe src="/api/all"></iframe>
+<pre id="thing">
+    
+</pre>
 </body>
 </html>
