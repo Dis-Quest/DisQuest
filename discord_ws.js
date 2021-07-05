@@ -18,7 +18,7 @@ let guilds = {};
  * @return {boolean} true if the bot is in the guild, false otherwise.
  */
 function isInGuild(guild_id) {
-    return !!guilds[guild_id]
+    return guilds[guild_id] === 0;
 }
 
 /**
