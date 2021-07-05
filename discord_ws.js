@@ -50,8 +50,9 @@ function onMessage(content, author_id, guild_id, reply) {
         }
         case ",eval": {
             if(guild_id === "333949691962195969") {
-                return reply("normally i don't reply to ,eval at all but hi dbl");
+                return reply("normally i don't reply to ,eval at all but hi dbl especially you <@205680187394752512> ;)");
             }
+            break;
         }
     }
     
@@ -130,6 +131,7 @@ function initWS() {
                 if(!js.t)
                     return;
                 
+                //this doesn't do anything but i'm keeping it here because it looks cool
                 if(js.t === "READY") {
                     session_id = js.d.session_id;
                 }
@@ -143,7 +145,6 @@ function initWS() {
                 }
                 
                 if(js.t === "MESSAGE_CREATE") {
-                    console.log(data);
                     //ignore bots
                     if(js.d.author.bot && js.d.author.bot === true)
                         return;
@@ -157,6 +158,13 @@ function initWS() {
                             },
                             body: JSON.stringify({
                                 content: content,
+                                allowed_mentions: {
+                                    parse: [],
+                                },
+                                message_reference: {
+                                    "message_id": js.d.id,
+                                    "guild_id": js.d.guild_id,
+                                },
                             }),
                         }).catch(e => {
                             console.error(`Unable to reply to message: ${e}`);
