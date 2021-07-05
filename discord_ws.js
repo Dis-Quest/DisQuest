@@ -103,8 +103,15 @@ function initWS() {
                             "$os": "linux",
                             "$browser": "disquest",
                             "$device": "disquest"
-                        }
-                    }
+                        },
+                        "presence": {
+                            "activities": [{
+                                "name": "https://dis.quest | use ,help",
+                                "type": 3,
+                            }],
+                            "status": "online",
+                        },
+                    },
                 }));
                 
                 heartbeat_interval = js.d.heartbeat_interval;
