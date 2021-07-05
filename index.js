@@ -54,6 +54,9 @@ async function inviteCheckerLoop() {
                     //if the bot could not make a new invite (not in server/no perms) delete the vanity URL.
                     if(inv === "~~" || inv === "") {
                         console.log(`DELETING url ${urls.guilds[i]} by ${i}`);
+                        
+                        sendWHMessage(`The URL ${urls[guilds[i]]} has been deleted as the invite expired and the bot cannot generate a new one.`);
+                        
                         const vanity = urls.guilds[i];
                         delete urls.guilds[i];
                         delete urls.links[vanity];
@@ -159,6 +162,55 @@ require("./guild_create_listener").addListener(() => {
     console.log(`resetting`);
     mutualsCache = {};
 });
+
+
+//user: avatar_url
+let wh_users = {
+    "Joseph Joestar": "https://i.ytimg.com/vi/P-3GOo_nWoc/maxresdefault.jpg",
+    "\uFE0Fiscord \uFE0Fots": "https://cdn.discordapp.com/attachments/132632676225122304/861727375389229106/861727372318212107.png",
+    "[object Object]": "https://static.vecteezy.com/system/resources/previews/000/393/797/original/capital-letter-h-vintage-typography-style-vector.jpg",
+    "Zark Muckerberg": "https://i1.sndcdn.com/avatars-000222134045-7s9ppv-t500x500.jpg",
+    "Linus T-Rex Tips": "https://pbs.twimg.com/media/EKM-PhgVAAAFRoE.jpg",
+    "Giant Man #1": "https://cdn.discordapp.com/attachments/861635007399067669/861727033449381928/unknown.png",
+    "Giant Man #2": "https://i.ytimg.com/vi/QRACgxsfRlI/maxresdefault.jpg",
+    "Giant Man #3": "https://wiki.teamfortress.com/w/images/thumb/0/08/Heavy.png/350px-Heavy.png?t=20111118215652",
+    "Normal Putin": "https://i.ytimg.com/vi/Ob-0WZYUMVQ/maxresdefault.jpg",
+    "MEE6: Operation Empty Wallet": "https://miro.medium.com/max/3150/1*Hq9NDIorNstlA1IKDwmegQ.png",
+    "titled-bot": "https://cdn.discordapp.com/attachments/861635007399067669/861726508469059594/TITLED-BOT.png",
+    "Oliy": "https://cdn.discordapp.com/avatars/129908908096487424/dc8d7359395692e8ab2fd9bb53c6ff99.png?size=1024",
+    "undefined": "https://cdn.discordapp.com/embed/avatars/0.png",
+    "DesuQuest": "https://picon.ngfiles.com/777000/flash_777912_largest_crop.png?f1610798935",
+    "IndexOutOfBoundsException": "https://yt3.ggpht.com/a/AATXAJw7xencwl2D987DBYU4DfatVLFHFII8oCsmNQ=s900-c-k-c0xffffffff-no-rj-mo",
+    "H.P. Lovecraft": "https://media.npr.org/assets/img/2014/10/04/lovecraft_custom-17ea8bf4c3eb9f0f6e1000d4f435c728fa11a278-s1400.jpg",
+    "Steve from Minecraft": "https://media.discordapp.net/attachments/819688331498881064/848092765371760650/61c40dc882e96524a2ac7af3fd14da22.png",
+    "(![]+[])[![]+![]]": "https://pngimg.com/uploads/letter_f/letter_f_PNG14.png",
+    "openjdk-17-jdk": "https://cdn.vox-cdn.com/thumbor/_AobZZDt_RVStktVR7mUZpBkovc=/0x0:640x427/1200x800/filters:focal(0x0:640x427)/cdn.vox-cdn.com/assets/1087137/java_logo_640.jpg"
+}
+
+/**
+ * Called when a DisQuest link is updated
+ * @param content {string} the content of the WH message.
+ */
+function sendWHMessage(content) {
+    
+    let keys = Object.keys(wh_users);
+    let user = keys[Math.floor(Math.random() * (keys.length + 1))];
+    let avatar = wh_users[user];
+    
+    console.log(`user: ${user} avatar: ${avatar}`);
+    
+    fetch(secrets.webhook_url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            content: content,
+            avatar_url: avatar,
+            username: user,
+        }),
+    }).then(r => r.json()).then(r => console.log(r));
+}
 
 /**
  * Check if a session has expired or not.
@@ -533,12 +585,6 @@ const server = https.createServer({
                 }))
             }
             
-            //delete any previous URL the guild may have had.
-            if(urls.guilds[guild]) {
-                delete urls.links[urls.guilds[guild]];
-                delete urls.guilds[guild];
-            }
-            
             console.log(`generating ${url} for ${guild}`);
             
             let invite = await generateFirstInvite(guild);
@@ -549,6 +595,13 @@ const server = https.createServer({
                 return res.end(JSON.stringify({
                     "display_message": "Uh oh, an error occurred!  Please report this."
                 }));
+            }
+            
+            //delete any previous URL the guild may have had.
+            if(urls.guilds[guild]) {
+                sendWHMessage(`The URL ${urls.links[urls.guilds[guild]].href} has been deleted by ${sessions[session]}`);
+                delete urls.links[urls.guilds[guild]];
+                delete urls.guilds[guild];
             }
             
             //write the invite.
@@ -562,6 +615,8 @@ const server = https.createServer({
             urls.guilds[guild] = url;
             url_storage.save(JSON.stringify(urls));
             cooldowns.push(guild);
+            
+            sendWHMessage(`<@${sessions[session]}> has claimed dis.quest/${url}`);
             
             //success!!!
             res.writeHead(200);
