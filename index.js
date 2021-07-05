@@ -55,7 +55,7 @@ async function inviteCheckerLoop() {
                     if(inv === "~~" || inv === "") {
                         console.log(`DELETING url ${urls.guilds[i]} by ${i}`);
                         
-                        sendWHMessage(`The URL ${urls[guilds[i]]} has been deleted as the invite expired and the bot cannot generate a new one.`);
+                        sendWHMessage(`The URL dis.quest/${urls[guilds[i]]} has been deleted as the invite expired and the bot cannot generate a new one.`);
                         
                         const vanity = urls.guilds[i];
                         delete urls.guilds[i];
@@ -599,7 +599,7 @@ const server = https.createServer({
             
             //delete any previous URL the guild may have had.
             if(urls.guilds[guild]) {
-                sendWHMessage(`The URL ${urls.links[urls.guilds[guild]].href} has been deleted by ${sessions[session]}`);
+                sendWHMessage(`The URL dis.quest/${urls.guilds[guild]} has been deleted by <@${sessions[session]}>`);
                 delete urls.links[urls.guilds[guild]];
                 delete urls.guilds[guild];
             }
