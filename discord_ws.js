@@ -50,7 +50,7 @@ function onMessage(content, author_id, guild_id, reply) {
         }
         case ",eval": {
             if(guild_id === "333949691962195969") {
-                return reply("normally i don't reply to ,eval at all but hi dbl especially you <@205680187394752512>");
+                return reply("normally i don't reply to ,eval at all but hi dbl especially you <@205680187394752512> stinky");
             }
             break;
         }
@@ -181,6 +181,10 @@ function initWS() {
 }
 
 initWS();
+
+function WSInfo() {
+    
+}
 
 module.exports = {
     isInGuild
