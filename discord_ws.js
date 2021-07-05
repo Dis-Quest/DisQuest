@@ -80,7 +80,6 @@ ws.on("close", () => {
 
 function initWS() {
     ws.on("message", data => {
-        console.log(data);
         try {
             const js = JSON.parse(data);
             
