@@ -48,6 +48,11 @@ function onMessage(content, author_id, guild_id, reply) {
         case ",info": {
             return reply(`\nInfo for the DisQuest bot:\n\`\`\`\nServers: ${Object.keys(guilds).length}\nMemory:  ${(process.memoryUsage.rss() / 1024 / 1024).toFixed(2)}MB of ${(os.freemem() / 1024 / 1024).toFixed(2)}MB.\nUptime:  ${(process.uptime() / 60).toFixed(2)} minutes or ${(process.uptime() / 60 / 60).toFixed(2)} hours.\n\`\`\`\nDisQuest version ${p.version}.\n\nMade with <3 by AlexIsOK#0384.`);
         }
+        case ",eval": {
+            if(guild_id === "333949691962195969") {
+                return reply("normally i don't reply to ,eval at all but hi dbl");
+            }
+        }
     }
     
 }
@@ -63,36 +68,25 @@ let heartbeat_interval;
 let resetInterval;
 
 ws.on("close", () => {
+    session_id = undefined;
+    seq = null;
     clearInterval(resetInterval);
-    console.log(`WebSocket has closed, re-opening...`);
-    ws = new WebSocket("https://gateway.discord.gg/?v=9&encoding=json");
-    initWS();
+    setTimeout(() => {
+        console.log(`WebSocket has closed, re-opening...`);
+        ws = new WebSocket("https://gateway.discord.gg/?v=9&encoding=json");
+        initWS();
+    }, 1000);
 });
 
 function initWS() {
     ws.on("message", data => {
-        
+        console.log(data);
         try {
             const js = JSON.parse(data);
             
             seq = js.s;
             
             if(js.op === 10) {
-                
-                console.log(`session: ${session_id}`);
-                
-                if(session_id) {
-                    console.log(`Session resuming.`);
-                    
-                    return ws.send(JSON.stringify({
-                        "op": 6,
-                        "d": {
-                            "token": secrets.bot_token,
-                            "session_id": session_id,
-                            "seq": seq,
-                        },
-                    }));
-                }
                 
                 ws.send(JSON.stringify({
                     "op": 2,
@@ -136,6 +130,8 @@ function initWS() {
                 
                 if(!js.t)
                     return;
+                
+                console.log(`Received event ${js.t}`);
                 
                 if(js.t === "READY") {
                     session_id = js.d.session_id;
