@@ -208,6 +208,9 @@ function sendWHMessage(content) {
             content: content,
             avatar_url: avatar,
             username: user,
+            allowed_mentions: {
+                parse: [],
+            },
         }),
     }).then(r => r.json()).then(r => console.log(r));
 }
