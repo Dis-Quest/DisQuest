@@ -212,7 +212,7 @@ function sendWHMessage(content) {
                 parse: [],
             },
         }),
-    }).then(r => r.json()).then(r => console.log(r));
+    });
 }
 
 /**
