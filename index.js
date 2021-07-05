@@ -167,7 +167,7 @@ require("./guild_create_listener").addListener(() => {
 //user: avatar_url
 let wh_users = {
     "Joseph Joestar": "https://i.ytimg.com/vi/P-3GOo_nWoc/maxresdefault.jpg",
-    "\uFE0Fiscord \uFE0Fots": "https://cdn.discordapp.com/attachments/132632676225122304/861727375389229106/861727372318212107.png",
+    "Biscord Dots": "https://cdn.discordapp.com/attachments/132632676225122304/861727375389229106/861727372318212107.png",
     "[object Object]": "https://static.vecteezy.com/system/resources/previews/000/393/797/original/capital-letter-h-vintage-typography-style-vector.jpg",
     "Zark Muckerberg": "https://i1.sndcdn.com/avatars-000222134045-7s9ppv-t500x500.jpg",
     "Linus T-Rex Tips": "https://pbs.twimg.com/media/EKM-PhgVAAAFRoE.jpg",
@@ -184,7 +184,17 @@ let wh_users = {
     "H.P. Lovecraft": "https://media.npr.org/assets/img/2014/10/04/lovecraft_custom-17ea8bf4c3eb9f0f6e1000d4f435c728fa11a278-s1400.jpg",
     "Steve from Minecraft": "https://media.discordapp.net/attachments/819688331498881064/848092765371760650/61c40dc882e96524a2ac7af3fd14da22.png",
     "(![]+[])[![]+![]]": "https://pngimg.com/uploads/letter_f/letter_f_PNG14.png",
-    "openjdk-17-jdk": "https://cdn.vox-cdn.com/thumbor/_AobZZDt_RVStktVR7mUZpBkovc=/0x0:640x427/1200x800/filters:focal(0x0:640x427)/cdn.vox-cdn.com/assets/1087137/java_logo_640.jpg"
+    "openjdk-17-jdk": "https://cdn.vox-cdn.com/thumbor/_AobZZDt_RVStktVR7mUZpBkovc=/0x0:640x427/1200x800/filters:focal(0x0:640x427)/cdn.vox-cdn.com/assets/1087137/java_logo_640.jpg",
+    "Morty's": "https://cdn.discordapp.com/attachments/861635007399067669/861746260863615036/mortys.png",
+    "Python Programming Language": "https://res.cloudinary.com/teepublic/image/private/s--HGX34F_2--/t_Preview/b_rgb:ffb81c,c_lpad,f_jpg,h_630,q_90,w_1200/v1539273850/production/designs/3302095_0.jpg",
+    "BILLION": "https://cdn.discordapp.com/avatars/277183033344524288/a_43cdc799c6f0c6281f771ecfa49fb329.png?size=1024",
+    "Cowboy Lettuce": "https://cdn.discordapp.com/attachments/265156286406983680/810738949848432700/magik.png",
+    "Ban Hammer": "https://cdn.discordapp.com/attachments/265156286406983680/810738826011869224/magik.png",
+    "Fart with Extra Reverb": "https://cdn.discordapp.com/attachments/861635007399067669/861748784412360735/unknown.png",
+    "Large Soda": "https://www.smogon.com/forums/media/data/avatars/o/476/476774.jpg?1552964152",
+    "Major Alex Louis Armstrong": "https://vignette4.wikia.nocookie.net/fullmetal-alchemist-database/images/5/54/AlexisLouisArmstrongEp05.png/revision/latest?cb=20121003100950",
+    "DownloadMoreAim.com": "https://downloadmoreaim.com/img/cross.png",
+    "Kitchen Gun": "https://i.ytimg.com/vi/UzyN-4v5-us/maxresdefault.jpg",
 }
 
 /**

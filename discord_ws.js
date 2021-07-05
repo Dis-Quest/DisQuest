@@ -26,9 +26,11 @@ function isInGuild(guild_id) {
  * @param content {string} the content of the message.
  * @param author_id {string} the ID of the author.
  * @param guild_id {string} the ID of the guild.
+ * @param roles {string[]} the array of roles of the member.
+ * @param mentions {[{"id":string,"discriminator":string,"bot":boolean,"avatar":string}]} the mentioned members.
  * @param reply {function} the reply.
  */
-function onMessage(content, author_id, guild_id, reply) {
+function onMessage(content, author_id, guild_id, roles, mentions, reply) {
     
     if(!content.startsWith(","))
         return;
@@ -56,6 +58,31 @@ function onMessage(content, author_id, guild_id, reply) {
         }
     }
     
+    if(content.startsWith(",ban")) {
+        if(guild_id !== "857884695093706773")
+            return;
+        if(!roles.includes("861753257759473666"))
+            return;
+        
+        mentions.forEach((m) => {
+            fetch("https://discord.com/api/v9/channels/861746837619081236/messages", {
+                method: "POST",
+                headers: {
+                    "Authorization": "Bot " + secrets.bot_token,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    content: `User ${m.username}#${m.discriminator} (<@${m.id}>) has been banned by <@${author_id}>.`,
+                }),
+            });
+            fetch("https://discord.com/api/v9/guilds/858216200798601216/bans/" + m.id, {
+                method: "PUT",
+                headers: {
+                    "Authorization": "Bot " + secrets.bot_token,
+                },
+            });
+        });
+    }
 }
 
 ws.on("open", () => {
@@ -149,7 +176,7 @@ function initWS() {
                     if(js.d.author.bot && js.d.author.bot === true)
                         return;
                     
-                    onMessage(js.d.content, js.d.author.id, js.d.guild_id, (content => {
+                    onMessage(js.d.content, js.d.author.id, js.d.guild_id, js.d.member.roles, js.d.mentions, (content => {
                         fetch(`https://discord.com/api/v9/channels/${js.d.channel_id}/messages`, {
                             method: "POST",
                             headers: {
@@ -181,10 +208,6 @@ function initWS() {
 }
 
 initWS();
-
-function WSInfo() {
-    
-}
 
 module.exports = {
     isInGuild
