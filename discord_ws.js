@@ -130,8 +130,6 @@ function initWS() {
                 if(!js.t)
                     return;
                 
-                console.log(`Received event ${js.t}`);
-                
                 if(js.t === "READY") {
                     session_id = js.d.session_id;
                 }
@@ -145,6 +143,11 @@ function initWS() {
                 }
                 
                 if(js.t === "MESSAGE_CREATE") {
+                    console.log(data);
+                    //ignore bots
+                    if(js.d.author.bot && js.d.author.bot === true)
+                        return;
+                    
                     onMessage(js.d.content, js.d.author.id, js.d.guild_id, (content => {
                         fetch(`https://discord.com/api/v9/channels/${js.d.channel_id}/messages`, {
                             method: "POST",
