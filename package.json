@@ -1,6 +1,6 @@
 {
   "name": "dis.quest",
-  "version": "1.11.4",
+  "version": "1.11.5",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,13 @@
     "start": "node index.js",
     "postversion": "git push"
   },
-  "keywords": ["discord", "discord-link", "discord-links", "discord-bot", "discord-api"],
+  "keywords": [
+    "discord",
+    "discord-link",
+    "discord-links",
+    "discord-bot",
+    "discord-api"
+  ],
   "author": "AlexIsOK",
   "license": "",
   "dependencies": {
