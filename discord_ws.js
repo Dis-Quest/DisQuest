@@ -126,7 +126,7 @@ function initWS() {
             seq = js.s;
             
             if(js.op !== 0) {
-                console.debug(data);
+                console.log(data);
             }
             
             if(js.op === 10) {
