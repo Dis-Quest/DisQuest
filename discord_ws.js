@@ -6,6 +6,7 @@ const fetch     = require("node-fetch");
 let ws = new WebSocket("wss://gateway.discord.gg/?v=9&encoding=json");
 
 const secrets = require("./secrets.json");
+const wh_util = require("./wh_util");
 
 const p = require("./package.json");
 
@@ -103,7 +104,7 @@ let resetInterval;
 
 setTimeout(() => {
     ws.terminate()
-}, 14400000);
+}, 3600000);
 
 ws.on("close", () => {
     session_id = undefined;
