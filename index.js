@@ -125,7 +125,7 @@ async function generateFirstInvite(guild_id) {
 //set the first timeout after a minute
 setTimeout(inviteCheckerLoop, 60000);
 
-setInterval(inviteCheckerLoop, 10800000);
+setInterval(inviteCheckerLoop, 3600000);
 
 //start the bot
 
