@@ -55,7 +55,7 @@ async function inviteCheckerLoop() {
                     let inv = await generateFirstInvite(i);
                     
                     //if the bot could not make a new invite (not in server/no perms) delete the vanity URL.
-                    if(inv === "~~" || inv === "") {
+                    if(inv === "~~" || inv === "" || inv === "~") {
                         console.log(`DELETING url ${urls.guilds[i]} by ${i}`);
                         
                         sendWHMessage(`The URL dis.quest/${urls.guilds[i]} has been deleted as the invite expired and the bot cannot generate a new one.`);
@@ -118,7 +118,7 @@ async function generateFirstInvite(guild_id) {
         }
         return "";
     } else {
-        return "";
+        return "~";
     }
 }
 
@@ -563,6 +563,13 @@ const server = https.createServer({
                 res.writeHead(400);
                 return res.end(JSON.stringify({
                     "display_message": "Uh oh, an error occurred!  Please report this."
+                }));
+            }
+            
+            if(invite === "~") {
+                res.writeHead(400);
+                return res.end(JSON.stringify({
+                    "display_message": "Your server does not have a system channel, please temporarily set one to use as an invite generator",
                 }));
             }
             

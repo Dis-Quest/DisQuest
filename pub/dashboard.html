@@ -159,6 +159,10 @@
                             document.getElementById("boost_link").innerText = "Link to the Official Server";
                         }
                         
+                        if(istaken.display_message.startsWith("Your server does not have a system channel")) {
+                            document.getElementById("system_channel").hidden = false;
+                        }
+                        
                         if(istaken.display_message.startsWith("Success!")) {
                             document.getElementById("current_link").hidden = false;
                             document.getElementById("current_link").innerText = "Current link: " + istaken.display_message.substring(31);
@@ -201,6 +205,8 @@
             document.getElementById("form_server_name").innerText = guilds[id].name;
             document.getElementById("invite_submit").innerText = "Create new Link!";
             document.getElementById("boost_link").innerText = "";
+            document.getElementById("system_channel").innerText = "";
+            document.getElementById("system_channel").hidden = true;
             document.getElementById("invite_link").value = "";
             selectedGuild = id;
             
@@ -290,6 +296,7 @@
             <button type="button" id="invite_submit" onclick="onLinkSubmit()">Create new Link!</button>
             <br>
             <a id="boost_link" href="/quest"></a>
+            <img src="https://cdn.discordapp.com/attachments/844757777242914816/862075416419762226/unknown.png" alt="enable_system_channel" id="system_channel" hidden>
         </form>
         <h1 id="server_current_invite" style="margin-top: 8vh;">Loading your servers...</h1>
     </div>
