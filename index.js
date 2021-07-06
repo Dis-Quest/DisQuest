@@ -21,6 +21,8 @@ let token = secrets.bot_token;
 //user_id: number
 let refreshServerListLimit = {}
 
+wh_util.sendWHMessage("Website is online.");
+
 /**
  * Run this on an interval and it will automatically check invite links.
  */
