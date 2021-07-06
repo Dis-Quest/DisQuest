@@ -14,6 +14,7 @@ const fs    = require("fs");
 const secrets = require("./secrets.json");
 
 const url_storage    = require("./url_storage");
+const wh_util        = require("./wh_util");
 
 let token = secrets.bot_token;
 
@@ -175,27 +176,7 @@ const wh_users = require("./wh_users.json");
  * @param content {string} the content of the WH message.
  */
 function sendWHMessage(content) {
-    
-    let keys = Object.keys(wh_users);
-    let user = keys[Math.floor(Math.random() * (keys.length + 1))];
-    let avatar = wh_users[user];
-    
-    console.log(`user: ${user} avatar: ${avatar}`);
-    
-    fetch(secrets.webhook_url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            content: content,
-            avatar_url: avatar,
-            username: user,
-            allowed_mentions: {
-                parse: [],
-            },
-        }),
-    });
+    wh_util.sendWHMessage(content);
 }
 
 /**

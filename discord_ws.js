@@ -83,6 +83,12 @@ function onMessage(content, author_id, guild_id, roles, mentions, reply) {
             });
         });
     }
+    
+    if(content.startsWith(",close")) {
+        if(author_id !== "541763812676861952")
+            return;
+        ws.terminate();
+    }
 }
 
 ws.on("open", () => {
@@ -94,6 +100,10 @@ let seq = null;
 let heartbeat_interval;
 
 let resetInterval;
+
+setTimeout(() => {
+    ws.terminate()
+}, 14400000);
 
 ws.on("close", () => {
     session_id = undefined;
@@ -207,8 +217,12 @@ function initWS() {
     });
 }
 
+function getWS() {
+    return ws;
+}
+
 initWS();
 
 module.exports = {
-    isInGuild
+    isInGuild, getWS
 }
