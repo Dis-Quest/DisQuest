@@ -89,7 +89,9 @@ function onMessage(content, author_id, guild_id, roles, mentions, reply) {
     if(content.startsWith(",close")) {
         if(author_id !== "541763812676861952")
             return;
-        ws.terminate();
+        console.log(`closing ws`);
+        ws.close();
+        restartWS();
     }
 }
 
@@ -103,11 +105,7 @@ let heartbeat_interval;
 
 let resetInterval;
 
-setTimeout(() => {
-    ws.terminate()
-}, 3600000);
-
-ws.on("close", () => {
+function restartWS() {
     session_id = undefined;
     seq = null;
     clearInterval(resetInterval);
@@ -115,8 +113,14 @@ ws.on("close", () => {
         console.log(`WebSocket has closed, re-opening...`);
         ws = new WebSocket("https://gateway.discord.gg/?v=9&encoding=json");
         initWS();
-    }, 1000);
-});
+    }, 10000);
+}
+
+setTimeout(() => {
+    restartWS();
+}, 3600000);
+
+ws.on("close", () => restartWS());
 
 function initWS() {
     ws.on("message", data => {
@@ -126,7 +130,6 @@ function initWS() {
             seq = js.s;
             
             if(js.op === 10) {
-                console.log(data);
                 
                 ws.send(JSON.stringify({
                     "op": 2,
