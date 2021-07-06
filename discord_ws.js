@@ -125,11 +125,8 @@ function initWS() {
             
             seq = js.s;
             
-            if(js.op !== 0) {
-                console.log(data);
-            }
-            
             if(js.op === 10) {
+                console.log(data);
                 
                 ws.send(JSON.stringify({
                     "op": 2,
