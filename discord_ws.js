@@ -53,6 +53,7 @@ function onMessage(content, author_id, guild_id, roles, mentions, reply) {
         }
         case ",eval": {
             if(guild_id === "333949691962195969") {
+                console.log(`testc`);
                 return reply("normally i don't reply to `,eval` at all but hi dbl especially you <@205680187394752512> stinky");
             }
             break;
@@ -123,6 +124,10 @@ function initWS() {
             const js = JSON.parse(data);
             
             seq = js.s;
+            
+            if(js.op !== 0) {
+                console.debug(data);
+            }
             
             if(js.op === 10) {
                 
