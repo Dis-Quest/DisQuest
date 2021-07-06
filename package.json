@@ -4,11 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "exit 0",
+    "start": "node index.js",
+    "postversion": "git push"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["discord", "discord-link", "discord-links", "discord-bot", "discord-api"],
+  "author": "AlexIsOK",
+  "license": "",
   "dependencies": {
     "@types/node-fetch": "^2.5.10",
     "node-fetch": "^2.6.1",
