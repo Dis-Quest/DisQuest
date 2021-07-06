@@ -55,7 +55,7 @@ async function inviteCheckerLoop() {
                     if(inv === "~~" || inv === "") {
                         console.log(`DELETING url ${urls.guilds[i]} by ${i}`);
                         
-                        sendWHMessage(`The URL dis.quest/${urls[guilds[i]]} has been deleted as the invite expired and the bot cannot generate a new one.`);
+                        sendWHMessage(`The URL dis.quest/${urls.guilds[i]} has been deleted as the invite expired and the bot cannot generate a new one.`);
                         
                         const vanity = urls.guilds[i];
                         delete urls.guilds[i];
@@ -118,6 +118,9 @@ async function generateFirstInvite(guild_id) {
         return "";
     }
 }
+
+//set the first timeout after a minute
+setTimeout(inviteCheckerLoop, 60000);
 
 setInterval(inviteCheckerLoop, 10800000);
 
