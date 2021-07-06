@@ -6,7 +6,6 @@
   "scripts": {
     "test": "exit 0",
     "start": "node index.js",
-    "preversion": "git add . && git commit",
     "postversion": "git push"
   },
   "keywords": [
