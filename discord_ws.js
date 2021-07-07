@@ -106,6 +106,7 @@ let heartbeat_interval;
 let resetInterval;
 
 function restartWS() {
+    ws.close();
     session_id = undefined;
     seq = null;
     clearInterval(resetInterval);
