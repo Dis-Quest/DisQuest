@@ -739,6 +739,9 @@ const server = https.createServer({
         else if(req.url.startsWith("/icon.png")) return deliverStatic("./pub/dis.quest.png", res, "image/png");
         else if(req.url === "/bot") return redirect("https://discord.com/api/oauth2/authorize?client_id=857884695093706773&permissions=1&redirect_uri=https%3A%2F%2Fdis.quest&scope=bot", res);
         else if(req.url === "/favicon.ico") return deliverStatic("./pub/favicon.ico", res, "image/x-icon");
+        else if(req.url === "/favicon16.png") return deliverStatic("./pub/favicon16.png", res, "image/x-icon");
+        else if(req.url === "/favicon32.png") return deliverStatic("./pub/favicon32.png", res, "image/x-icon");
+        else if(req.url === "/favicon96.png") return deliverStatic("./pub/favicon96.png", res, "image/x-icon");
         else if(req.url === "/dashboard.css") return deliverStatic("./pub/dashboard.css", res, "text/css");
         else if(req.url.startsWith("/contact")) return deliverStatic("./pub/contact.html", res, "text/html");
         else if(req.url.startsWith("/support")) return redirect("https://dis.quest/faq", res);
