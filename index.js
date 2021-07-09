@@ -460,13 +460,13 @@ const server = https.createServer({
             
             //if the URL is a premium URL and the user is not boosting,
             //stop it here.
-            if(url.length <= 5) {
+            if(url.length <= 3) {
                 let isBoosting = await isBooster(sessions[session]);
                 console.log(`isboosting: ${isBoosting}`);
                 if(!isBoosting) {
                     res.writeHead(402);
                     return res.end(JSON.stringify({
-                        "display_message": "You must boost the official server to get a URL that is 1 to 5 characters."
+                        "display_message": "You must boost the official server to get a URL that is 1 to 3 characters."
                     }));
                 }
             }
