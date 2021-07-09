@@ -34,7 +34,7 @@ function sendWHMessage(content, log = false) {
             body: JSON.stringify({
                 content: content,
                 avatar_url: "https://dis.quest/icon.png",
-                username: user,
+                username: "DisQuest logs",
                 allowed_mentions: {
                     parse: [],
                 },
