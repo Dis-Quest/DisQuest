@@ -101,6 +101,18 @@ function onMessage(content, author_id, guild_id, roles, mentions, reply) {
             }
             break;
         }
+        case ",watch": {
+            if(guild_id !== "")
+                return;
+            
+            break;
+        }
+        case ",clearwatches": {
+            break;
+        }
+        case ",watches": {
+            break;
+        }
     }
     
     if(content.startsWith(",ban")) {
