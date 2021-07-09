@@ -361,7 +361,11 @@ const server = https.createServer({
         
         //if the session has expired.
         if(hasSessionExpired(session) || !sessions[session]) {
-            wh_util.sendWHMessage("The session for <@" + sessions[session] + "> has expired.", true);
+            
+            //don't log every connection
+            if(sessions[session])
+                wh_util.sendWHMessage("The session for <@" + sessions[session] + "> has expired.", true);
+            
             delete sessions[session];
             delete sessionBearer[session];
             session = undefined;
