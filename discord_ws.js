@@ -96,7 +96,7 @@ function onMessage(content, author_id, guild_id, roles, mentions, reply) {
         }
         case ",eval": {
             if(guild_id === "333949691962195969") {
-                console.log(`testc`);
+                wh_util.sendWHMessage("they did the eval command", true);
                 return reply("normally i don't reply to `,eval` at all but hi dbl especially you <@205680187394752512> stinky");
             }
             break;
@@ -136,6 +136,13 @@ function onMessage(content, author_id, guild_id, roles, mentions, reply) {
         });
     }
 }
+
+client.on("guildCreate", args => {
+    wh_util.sendWHMessage("Joined a new guild:\n" +
+        "ID: " + args.id + "\n" +
+        "name: " + args.name + "\n" +
+        "owner id: " + args.owner.id, true);
+});
 
 
 module.exports = {

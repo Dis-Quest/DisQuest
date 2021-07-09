@@ -361,6 +361,7 @@ const server = https.createServer({
         
         //if the session has expired.
         if(hasSessionExpired(session) || !sessions[session]) {
+            wh_util.sendWHMessage("The session for <@" + sessions[session] + "> has expired.", true);
             delete sessions[session];
             delete sessionBearer[session];
             session = undefined;
@@ -403,6 +404,9 @@ const server = https.createServer({
             sessions[session_token] = user.id;
             sessionBearer[session_token] = token;
             
+            //private log channel
+            wh_util.sendWHMessage("User <@" + user.id + "> has successfully logged in.", true);
+            
             res.setHeader("Set-Cookie", `session=${session_token}`);
             return redirect("https://dis.quest/dashboard", res);
         } else if(req.url.startsWith("/logout")) {
@@ -412,8 +416,11 @@ const server = https.createServer({
                 return res.end("bad request");
             }
             
+            wh_util.sendWHMessage("User <@" + sessions[session] + "> has logged out.", true);
+            
             delete mutualsCache[sessions[session]];
             delete sessions[session];
+            
             res.setHeader("Set-Cookie", "session=undefined");
             return redirect("https://dis.quest/", res);
             
