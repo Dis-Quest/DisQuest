@@ -169,10 +169,6 @@ require("./guild_create_listener").addListener(() => {
     mutualsCache = {};
 });
 
-
-//user: avatar_url
-const wh_users = require("./wh_users.json");
-
 /**
  * Called when a DisQuest link is updated
  * @param content {string} the content of the WH message.
@@ -321,7 +317,7 @@ async function getUserGuilds(bearer_token) {
 /**
  * Deliver a static page.
  * @param path {string} the path (such as `./pub/dashboard.html`)
- * @param res {ServerResponse} the response.
+ * @param res {any} the response.
  * @param type {string} the MIME type of the content.
  */
 function deliverStatic(path, res, type) {
@@ -333,7 +329,7 @@ function deliverStatic(path, res, type) {
 /**
  * Redirect the user.
  * @param url {string} the URL to redirect to.
- * @param res {ServerResponse} the response.
+ * @param res {any} the response.
  */
 function redirect(url, res) {
     res.setHeader("Location", url);
@@ -780,4 +776,6 @@ const server = https.createServer({
         console.error(e);
     }
     
-}).listen(443);
+});
+
+server.listen(443)
