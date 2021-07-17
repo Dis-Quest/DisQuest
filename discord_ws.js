@@ -116,7 +116,7 @@ function onMessage(content, author_id, guild_id, roles, mentions, reply) {
     }
     
     if(content.startsWith(",ban")) {
-        if(guild_id !== "857884695093706773")
+        if(guild_id !== "858216200798601216")
             return;
         if(!roles.includes("861753257759473666"))
             return;
