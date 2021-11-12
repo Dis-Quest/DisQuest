@@ -92,7 +92,7 @@ function onMessage(content, author_id, guild_id, roles, mentions, reply) {
             return;
         }
         case ",info": {
-            return reply(`\nInfo for the DisQuest bot:\n\`\`\`\nServers: ${client.guilds.cache.size}\nMemory:  ${(process.memoryUsage.rss() / 1024 / 1024).toFixed(2)}MB of ${(os.freemem() / 1024 / 1024).toFixed(2)}MB.\nUptime:  ${(process.uptime() / 60).toFixed(2)} minutes or ${(process.uptime() / 60 / 60).toFixed(2)} hours.\n\`\`\`\nDisQuest version ${p.version}.\n\nMade with <3 by AlexIsOK#0384.`);
+            return reply(`\nInfo for the DisQuest bot:\n\`\`\`\nServers: ${client.guilds.cache.size}\nMemory:  ${(process.memoryUsage.rss() / 1024 / 1024).toFixed(2)}MB of ${(os.freemem() / 1024 / 1024).toFixed(2)}MB.\nUptime:  ${(process.uptime() / 60).toFixed(2)} minutes or ${(process.uptime() / 60 / 60).toFixed(2)} hours.\n\`\`\`\nDisQuest version ${p.version}.\n\nMade with <3 by alexcool#0384.`);
         }
         case ",eval": {
             if(guild_id === "333949691962195969") {
