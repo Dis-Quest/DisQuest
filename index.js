@@ -273,12 +273,15 @@ async function tradeCode(code) {
     })).then(res => res.json());
     
     if(!json || !json.access_token || !json.scope) {
+        console.error("JSON: " + JSON.stringify(json));
         return undefined;
     }
     
     //make sure the user didn't mess with the scopes
-    if(json.scope !== "identify guilds")
+    if(json.scope !== "identify guilds") {
+        console.error("Invalid identity");
         return undefined;
+    }
     
     return json.access_token;
 }
